@@ -6,8 +6,8 @@
   <!-- badges -->
   <p>
     <a href="https://arxiv.org/abs/2606.19625"><img src="https://img.shields.io/badge/%F0%9F%93%84%20paper-arXiv%202606.19625-1f2328.svg" alt="Paper"></a>
-    <a href="https://eilab.gatech.edu/social-data-attribution/"><img src="https://img.shields.io/badge/venue-COLM%202026-762a83.svg" alt="COLM 2026"></a>
-    <a href="https://eilab.gatech.edu/social-data-attribution/"><img src="https://img.shields.io/badge/%F0%9F%8C%90%20website-project%20page-2f6fa8.svg" alt="Project page"></a>
+    <a href="https://eilab.gatech.edu/capabilibara/"><img src="https://img.shields.io/badge/venue-COLM%202026-762a83.svg" alt="COLM 2026"></a>
+    <a href="https://eilab.gatech.edu/capabilibara/"><img src="https://img.shields.io/badge/%F0%9F%8C%90%20website-project%20page-2f6fa8.svg" alt="Project page"></a>
     <img src="https://img.shields.io/badge/code-pending%20release-8c6d1f.svg" alt="Code status: pending release">
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-a93428.svg" alt="License: AGPL-3.0"></a>
     <img src="https://img.shields.io/badge/python-3.12-2f6fa8.svg" alt="Python 3.12">
@@ -91,7 +91,7 @@ Public Hugging Face buckets and the released aggregate artifacts are listed in t
 
 ## Roadmap
 
-- [x] Project website live ([eilab.gatech.edu/social-data-attribution](https://eilab.gatech.edu/social-data-attribution/))
+- [x] Project website live ([eilab.gatech.edu/capabilibara](https://eilab.gatech.edu/capabilibara/))
 - [x] Paper on arXiv ([2606.19625](https://arxiv.org/abs/2606.19625))
 - [ ] Audited code port (Copybara)
 - [ ] Sampling manifests

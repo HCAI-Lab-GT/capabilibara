@@ -15,7 +15,7 @@ short_description: Capability provenance in language models (COLM 2026).
 *A Case Study in Social Reasoning (COLM 2026)*
 
 [![Paper](https://img.shields.io/badge/%F0%9F%93%84%20paper-arXiv%202606.19625-1f2328.svg)](https://arxiv.org/abs/2606.19625)
-[![Venue](https://img.shields.io/badge/venue-COLM%202026-762a83.svg)](https://eilab.gatech.edu/social-data-attribution/)
+[![Venue](https://img.shields.io/badge/venue-COLM%202026-762a83.svg)](https://eilab.gatech.edu/capabilibara/)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-a93428.svg)](https://github.com/eilab-gt/capabilibara/blob/main/LICENSE)
 
 Hosted by **HCAI-Lab** (Human-Centered AI Lab / EILab).

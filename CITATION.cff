@@ -3,7 +3,7 @@ message: "If you use this software, please cite the accompanying paper."
 title: "Capability Provenance in Language Models: A Case Study in Social Reasoning"
 type: software
 repository-code: "https://github.com/eilab-gt/capabilibara"
-url: "https://eilab.gatech.edu/social-data-attribution/"
+url: "https://eilab.gatech.edu/capabilibara/"
 abstract: >-
   Training-data attribution as an interpretable tool for capability discovery,
   mapping which regions of the pretraining corpus support social-reasoning
