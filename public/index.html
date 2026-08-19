@@ -73,8 +73,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-  <link rel="stylesheet" href="./static/css/index.css?v=20260729b">
-  <link rel="stylesheet" href="./static/css/figures.css?v=20260729">
+  <link rel="stylesheet" href="./static/css/index.css?v=20260802">
+  <link rel="stylesheet" href="./static/css/figures.css?v=20260802">
   <noscript><style>[data-aos]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
@@ -98,11 +98,9 @@
       <div class="navbar-end">
         <a class="navbar-item" href="#abstract">Abstract</a>
         <a class="navbar-item" href="#method">Method</a>
-        <a class="navbar-item" href="#influence">Influence</a>
-        <a class="navbar-item" href="#data">Data</a>
         <a class="navbar-item" href="#findings">Findings</a>
+        <a class="navbar-item" href="#capabilities">Capabilities</a>
         <a class="navbar-item" href="#models">Models</a>
-        <a class="navbar-item" href="#limitations">Limits</a>
         <a class="navbar-item" href="#resources">Resources</a>
         <a class="navbar-item" href="#BibTeX">Citation</a>
       </div>
@@ -112,7 +110,7 @@
 
 <header id="top" class="paper-hero">
   <div class="paper-shell hero-copy" data-aos="fade-up">
-    <p class="publication-venue">Accepted at COLM 2026 Main Conference and SciFM Workshop</p>
+    <p class="publication-venue">Accepted at COLM 2026 Main Conference, SciFM Workshop, and Social Sim Workshop</p>
     <h1 class="publication-title">Capability Provenance in Language Models</h1>
     <p class="publication-subtitle">A Case Study in Social Reasoning</p>
 
@@ -130,7 +128,7 @@
       <span class="author-block">Mark Riedl<span class="aff-marker" aria-hidden="true">🐝</span></span>
     </div>
     <p class="publication-affiliations">
-      <span aria-hidden="true">🐝</span> Georgia Tech &middot; <span aria-hidden="true">🔥</span> MATS &middot; <span aria-hidden="true">🕊️</span> EleutherAI &middot; <span aria-hidden="true">🤖</span> KAIST AI &middot; <span aria-hidden="true">🛡️</span> GT AI Safety Initiative
+      <span aria-hidden="true">🐝</span> Georgia Tech  <span aria-hidden="true">🔥</span> MATS  <span aria-hidden="true">🕊️</span> EleutherAI  <span aria-hidden="true">🤖</span> KAIST AI  <span aria-hidden="true">🛡️</span> GT AI Safety Initiative
     </p>
 
     <div class="publication-links" aria-label="Paper links">
@@ -149,18 +147,6 @@
 </header>
 
 <main id="main">
-  <section class="contribution-band" aria-label="One-sentence contribution">
-    <div class="paper-shell">
-      <p class="contribution-statement">
-        Where does a language model's social reasoning come from? We trace
-        skills back to the training data that supports them. Affective,
-        informal, conversational text supports social reasoning; math and STEM
-        reasoning draw on different text. And when a model is made to forget
-        the flagged data, the matching skill weakens more than when it forgets
-        random data.
-      </p>
-    </div>
-  </section>
 
   <!-- Metrics band: intentionally disabled (maintainer decision, 2026-07-29).
        Quantitative results are being rerun across more models and none are
@@ -177,7 +163,6 @@
   </section>
   -->
 
-
   <section id="abstract" class="paper-section">
     <div class="paper-shell section-grid">
       <div class="section-heading" data-aos="fade-up">
@@ -186,27 +171,18 @@
       </div>
       <div class="paper-copy" data-aos="fade-up" data-aos-delay="100">
         <p>
-          Language models learn everything they can do from their training data, but which data
-          taught which skill is usually invisible. We use training-data attribution to make it
-          visible: starting from a capability, we trace back through the model to the kinds of
-          training text that support it.
-        </p>
-        <p>
-          We ask one focused question: does social reasoning &mdash; figuring out what people
-          want, feel, and intend &mdash; come from different text than STEM reasoning? We label
-          every document in a fully open training corpus by topic and format, score how strongly
-          each region of the corpus supports each skill, and then check the answer causally by
-          making the model forget flagged regions and re-testing it.
-        </p>
-        <p>
-          The answer is yes. Social reasoning draws on conversational, affect-rich,
-          people-centered writing; STEM reasoning draws on technical, expository material. We
-          measured this first in OLMo3, and we are re-running the same pipeline across a family
-          of open-data models to test how far the pattern generalizes.
+          How does a language model learn to interpret people's beliefs, emotions, intentions,
+          and everyday moral choices? We trace that ability back to the training text that
+          taught it: scoring influence across topic and format categories, reading the language
+          of the highest-influence text, and confirming causally with unlearning. We expand the
+          pipeline to a broad range of capabilities such as theory of mind, moral judgment, and
+          social bias, as well as across multiple open models.
         </p>
       </div>
     </div>
   </section>
+
+  
 
   <section id="method" class="paper-section concept-section">
     <div class="paper-shell">
@@ -219,6 +195,42 @@
         </p>
       </div>
 
+      <div class="method-walkthrough" data-aos="fade-up">
+        <div class="fig1" data-fig1>
+          <figure class="image fig1-fallback">
+            <svg class="fig1-schematic" viewBox="0 0 880 200" role="img" aria-label="Four-stage capability provenance pipeline: build a labeled corpus, score influence per region, read the influence map, and check it causally with unlearning.">
+              <g class="f1s-box">
+                <rect x="10" y="40" width="190" height="110" rx="10"></rect>
+                <text x="105" y="76" class="f1s-title">1. Labeled corpus</text>
+                <text x="105" y="100" class="f1s-copy">open training data, binned</text>
+                <text x="105" y="118" class="f1s-copy">24 topics &times; 24 formats</text>
+              </g>
+              <path class="f1s-arrow" d="M 202 95 H 228"></path>
+              <g class="f1s-box">
+                <rect x="232" y="40" width="190" height="110" rx="10"></rect>
+                <text x="327" y="76" class="f1s-title">2. Attribution</text>
+                <text x="327" y="100" class="f1s-copy">score how each region</text>
+                <text x="327" y="118" class="f1s-copy">supports each skill</text>
+              </g>
+              <path class="f1s-arrow" d="M 424 95 H 450"></path>
+              <g class="f1s-box">
+                <rect x="454" y="40" width="190" height="110" rx="10"></rect>
+                <text x="549" y="76" class="f1s-title">3. Influence map</text>
+                <text x="549" y="100" class="f1s-copy">supportive vs opposing</text>
+                <text x="549" y="118" class="f1s-copy">corpus regions</text>
+              </g>
+              <path class="f1s-arrow" d="M 646 95 H 672"></path>
+              <g class="f1s-box">
+                <rect x="676" y="40" width="190" height="110" rx="10"></rect>
+                <text x="771" y="76" class="f1s-title">4. Unlearning check</text>
+                <text x="771" y="100" class="f1s-copy">forget flagged data,</text>
+                <text x="771" y="118" class="f1s-copy">re-test the skill</text>
+              </g>
+            </svg>
+          </figure>
+        </div>
+      </div>
+
       <div class="concept-row influence-row" id="influence">
         <div class="concept-copy" data-aos="fade-up">
           <p class="mini-kicker">The core tool</p>
@@ -226,120 +238,89 @@
           <p>
             The model answered a question correctly. Which parts of its training data taught it
             that? An influence function estimates how the model's answer would change if one
-            training document had been left out &mdash; without retraining the model.
+            training document had been left out, without retraining the model.
           </p>
           <p>
             During training, every document nudges the model's internal settings a little. A
             benchmark question also defines a direction: what would make the model better at this?
-            Documents whose nudge points the same way have positive influence &mdash; they
+            Documents whose nudge points the same way have positive influence: they
             supported the skill. Documents whose nudge points the opposite way score negative.
-          </p>
-          <p class="takeaway">
-            One document's score is noisy. Average over thousands of documents that share a topic
-            and format, and the noise fades into a readable map of where a skill comes from. These
-            are estimates, not proofs &mdash; which is why the pipeline ends with an unlearning
-            check.
           </p>
         </div>
         <div class="influence-viz" data-concept="influence" data-aos="fade-up" data-aos-delay="120">
-          <svg viewBox="0 0 460 240" role="img" aria-label="Three panels: a benchmark question defines a direction; a training document pointing the same way supports the skill; a document pointing the opposite way works against it.">
+          <svg class="infl-static" viewBox="0 0 460 292" role="img" aria-label="The benchmark question defines a direction, drawn as an arrow pointing right. A training document whose nudge points the same way has positive influence. A document whose nudge points the opposite way has negative influence.">
             <g class="infl-panel">
-              <rect x="10" y="14" width="140" height="196" rx="10"></rect>
-              <text x="80" y="44" class="infl-title">The question</text>
-              <line x1="80" y1="176" x2="80" y2="84" class="infl-arrow infl-query"></line>
-              <polygon points="80,72 72,88 88,88" class="infl-head infl-query"></polygon>
-              <text x="80" y="202" class="infl-caption">"what would make</text>
-              <text x="80" y="216" class="infl-caption">me better at this?"</text>
+              <text x="230" y="26" class="infl-title">The question's direction</text>
+              <line x1="120" y1="58" x2="322" y2="58" class="infl-arrow infl-query"></line>
+              <polygon points="336,58 320,50 320,66" class="infl-head infl-query"></polygon>
+              <text x="230" y="88" class="infl-caption">&ldquo;what would make the model better at this?&rdquo;</text>
             </g>
             <g class="infl-panel">
-              <rect x="160" y="14" width="140" height="196" rx="10"></rect>
-              <text x="230" y="44" class="infl-title">Aligned nudge</text>
-              <line x1="230" y1="176" x2="230" y2="84" class="infl-arrow infl-pos"></line>
-              <polygon points="230,72 222,88 238,88" class="infl-head infl-pos"></polygon>
-              <text x="230" y="202" class="infl-caption">supports the skill</text>
-              <text x="230" y="216" class="infl-caption">positive influence</text>
+              <rect x="104" y="112" width="28" height="38" rx="3" class="infl-doc"></rect>
+              <line x1="110" y1="122" x2="126" y2="122" class="infl-doc-line"></line>
+              <line x1="110" y1="129" x2="126" y2="129" class="infl-doc-line"></line>
+              <line x1="110" y1="136" x2="122" y2="136" class="infl-doc-line"></line>
+              <line x1="146" y1="131" x2="298" y2="131" class="infl-arrow infl-pos"></line>
+              <polygon points="312,131 296,123 296,139" class="infl-head infl-pos"></polygon>
+              <text x="230" y="172" class="infl-caption">this document's nudge points the same way</text>
+              <text x="230" y="186" class="infl-caption infl-pos-label">positive influence: it supported the skill</text>
             </g>
             <g class="infl-panel">
-              <rect x="310" y="14" width="140" height="196" rx="10"></rect>
-              <text x="380" y="44" class="infl-title">Opposed nudge</text>
-              <line x1="380" y1="84" x2="380" y2="176" class="infl-arrow infl-neg"></line>
-              <polygon points="380,188 372,172 388,172" class="infl-head infl-neg"></polygon>
-              <text x="380" y="202" class="infl-caption">works against it</text>
-              <text x="380" y="216" class="infl-caption">negative influence</text>
+              <rect x="328" y="204" width="28" height="38" rx="3" class="infl-doc"></rect>
+              <line x1="334" y1="214" x2="350" y2="214" class="infl-doc-line"></line>
+              <line x1="334" y1="221" x2="350" y2="221" class="infl-doc-line"></line>
+              <line x1="334" y1="228" x2="346" y2="228" class="infl-doc-line"></line>
+              <line x1="314" y1="223" x2="162" y2="223" class="infl-arrow infl-neg"></line>
+              <polygon points="148,223 164,215 164,231" class="infl-head infl-neg"></polygon>
+              <text x="230" y="264" class="infl-caption">this document's nudge points the opposite way</text>
+              <text x="230" y="278" class="infl-caption infl-neg-label">negative influence: it worked against it</text>
             </g>
           </svg>
         </div>
       </div>
 
-      <div class="method-walkthrough" data-aos="fade-up">
-        <div class="fig1" data-fig1>
-          <figure class="image fig1-fallback">
-            <svg class="fig1-schematic" viewBox="0 0 880 200" role="img" aria-label="Four-stage capability provenance pipeline: build a labeled corpus, score influence per region, read the influence map, and check it causally with unlearning.">
-              <g class="f1s-box">
-                <rect x="10" y="40" width="190" height="110" rx="10"></rect>
-                <text x="105" y="76" class="f1s-title">1 &middot; Labeled corpus</text>
-                <text x="105" y="100" class="f1s-copy">open training data,</text>
-                <text x="105" y="118" class="f1s-copy">binned by topic &times; format</text>
-              </g>
-              <path class="f1s-arrow" d="M 202 95 H 228"></path>
-              <g class="f1s-box">
-                <rect x="232" y="40" width="190" height="110" rx="10"></rect>
-                <text x="327" y="76" class="f1s-title">2 &middot; Attribution</text>
-                <text x="327" y="100" class="f1s-copy">score how each region</text>
-                <text x="327" y="118" class="f1s-copy">supports each skill</text>
-              </g>
-              <path class="f1s-arrow" d="M 424 95 H 450"></path>
-              <g class="f1s-box">
-                <rect x="454" y="40" width="190" height="110" rx="10"></rect>
-                <text x="549" y="76" class="f1s-title">3 &middot; Influence map</text>
-                <text x="549" y="100" class="f1s-copy">supportive vs opposing</text>
-                <text x="549" y="118" class="f1s-copy">corpus regions</text>
-              </g>
-              <path class="f1s-arrow" d="M 646 95 H 672"></path>
-              <g class="f1s-box">
-                <rect x="676" y="40" width="190" height="110" rx="10"></rect>
-                <text x="771" y="76" class="f1s-title">4 &middot; Unlearning check</text>
-                <text x="771" y="100" class="f1s-copy">forget flagged data,</text>
-                <text x="771" y="118" class="f1s-copy">re-test the skill</text>
-              </g>
-            </svg>
-          </figure>
-        </div>
-        <p class="figure-note">
-          Animated walkthrough of the pipeline: build a labeled corpus, score influence per
-          region, read the map, and check it causally with unlearning. Step through with the
-          stage buttons or press play.
-        </p>
-      </div>
+      
 
-      <div class="concept-row taxonomy-row">
+      <div class="concept-row contrast-row taxonomy-row">
+        <div class="taxonomy-viz" data-concept="taxonomy" data-aos="fade-up" data-aos-delay="120">
+          <div class="tax-axis tax-axis-y">24 topics</div>
+          <div class="tax-grid-wrap">
+            <div class="tax-axis tax-axis-x">24 formats</div>
+            <div class="tax-grid" data-tax-grid aria-label="24 by 24 topic-format taxonomy grid"></div>
+            <noscript><p class="tax-note">The interactive 24 &times; 24 grid needs JavaScript. The study crosses 24 topics with 24 formats into 576 bins.</p></noscript>
+          </div>
+          <div class="tax-labels">
+            <span><b class="tax-num">1</b>Social Life &times; Q&amp;A Forum</span>
+            <span><b class="tax-num">2</b>Science &amp; Tech &times; Tutorial</span>
+            <span><b class="tax-num">3</b>Politics &times; Documentation</span>
+            <span><b class="tax-num">4</b>Literature &times; Customer Support</span>
+            <span><b class="tax-num">5</b>Home &amp; Hobbies &times; Creative Writing</span>
+            <span><b class="tax-num">6</b>Education &amp; Jobs &times; FAQ</span>
+          </div>
+        </div>
         <div class="concept-copy" data-aos="fade-up">
           <p class="mini-kicker">Corpus taxonomy</p>
           <h3>24 topics crossed with 24 formats.</h3>
           <p>
             The corpus is de-duplicated and every document is labeled by what it is about (topic)
             and what kind of writing it is (format), using an off-the-shelf taxonomy
-            (WebOrganizer). Sampling evenly across the occupied bins turns attribution from a
-            document retrieval problem into a structured corpus comparison problem.
+            (WebOrganizer). That gives 576 topic-format bins, and the highlighted cells are
+            illustrative examples. Sampling evenly across the occupied bins turns attribution
+            from a document retrieval problem into a structured corpus comparison problem.
           </p>
-        </div>
-        <div class="taxonomy-viz" data-concept="taxonomy" data-aos="fade-up" data-aos-delay="120">
-          <div class="tax-axis tax-axis-y">Topics</div>
-          <div class="tax-grid-wrap">
-            <div class="tax-axis tax-axis-x">Formats</div>
-            <div class="tax-grid" data-tax-grid aria-label="24 by 24 topic-format taxonomy grid"></div>
-            <noscript><p class="tax-note">The interactive 24 &times; 24 grid needs JavaScript; the study crosses 24 topics with 24 formats into 576 bins.</p></noscript>
-          </div>
-          <div class="tax-labels">
-            <span>Social Life &times; Q&amp;A Forum</span>
-            <span>Science &amp; Tech &times; Tutorial</span>
-            <span>Politics &times; Documentation</span>
-          </div>
-          <p class="tax-note">Highlighted cells and labels are illustrative examples of topic-format bins.</p>
         </div>
       </div>
 
-      <div class="concept-row contrast-row">
+      <div class="concept-row">
+        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+          <p class="mini-kicker">Contrastive design</p>
+          <h3>Domain and capability type are separated.</h3>
+          <p>
+            The 2 by 2 design asks whether social reasoning is merely social-domain knowledge, or
+            whether reasoning tasks use different corpus regions than knowledge tasks in the same
+            domain.
+          </p>
+        </div>
         <div class="contrast-viz" data-concept="contrast" data-aos="fade-up">
           <div class="contrast-grid">
             <div class="contrast-axis"></div>
@@ -365,43 +346,6 @@
             </div>
           </div>
         </div>
-        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
-          <p class="mini-kicker">Contrastive design</p>
-          <h3>Domain and capability type are separated.</h3>
-          <p>
-            The 2 by 2 design asks whether social reasoning is merely social-domain knowledge, or
-            whether reasoning tasks use different corpus regions than knowledge tasks in the same
-            domain.
-          </p>
-          <p class="takeaway">
-            If reasoning and knowledge in the same domain draw on the same documents, the two pairs
-            should separate identically. They do not, which is the question finding 03 takes up.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="data" class="paper-section">
-    <div class="paper-shell section-grid">
-      <div class="section-heading" data-aos="fade-up">
-        <p class="section-kicker">Data</p>
-        <h2>Four benchmarks, one fully open corpus.</h2>
-      </div>
-      <div class="paper-copy" data-aos="fade-up" data-aos-delay="100">
-        <p>
-          All four probes are OLMES-standard multiple-choice benchmarks, evaluated 5-shot:
-          SocialIQA (social reasoning), MMLU Social Sciences (social knowledge), ARC-Challenge
-          (science reasoning), and MMLU STEM (STEM knowledge). For the OLMo3 deep-dive, query
-          gradients come from the instruct model on the bare questions, while document gradients
-          are computed on the base model, keeping the analysis tied to pretraining data.
-        </p>
-        <p>
-          The corpus side is what makes the study possible: every document the model trained on
-          is open and available for analysis. That is billions of unique documents after
-          de-duplication, from which we draw a stratified sample of several million spread across
-          all topic-format bins &mdash; the raw corpus is heavily skewed toward a few large ones.
-        </p>
       </div>
     </div>
   </section>
@@ -410,91 +354,200 @@
     <div class="paper-shell">
       <div class="section-heading centered" data-aos="fade-up">
         <p class="section-kicker">Findings</p>
-        <h2>Social reasoning has a distinct provenance signature.</h2>
+        <h2>Different capabilities, different data distributions.</h2>
+        <p>
+          Core finding: each capability draws support from its own distribution of
+          training text, not one shared pile.
+        </p>
       </div>
-      <div class="finding-stack">
-        <article class="finding-row" data-aos="fade-up">
-          <span class="finding-number">01</span>
-          <div>
-            <h3>Different skills, different data.</h3>
-            <p class="finding-explain">
-              We compared how each benchmark draws on the labeled corpus. Social reasoning stands
-              apart: the kinds of text it relies on look unlike the kinds the STEM and
-              social-knowledge tasks rely on, and those three resemble each other. First measured
-              in OLMo3; the same comparison is being re-run on every model we add.
-            </p>
-            <div class="finding-evidence">
-              <p>
-                How we measured it: for each pair of benchmarks, we correlated their influence
-                profiles across the whole topic-format taxonomy.
-              </p>
-            </div>
-          </div>
-        </article>
 
-        <article class="finding-row" data-aos="fade-up">
-          <span class="finding-number">02</span>
-          <div>
-            <h3>The text behind social reasoning is conversational, affective, and people-centered.</h3>
-            <p class="finding-explain">
-              Reading the high-influence text itself, it comes in two flavors: interactional
-              writing &mdash; dialogue, questions and answers, feelings and intentions, lots of
-              "you" and "I" &mdash; and expository writing such as guides and manuals about how
-              people deal with each other. Math and STEM reasoning draw instead on structured,
-              technical text. This lexical pattern, not any single corpus slice, is the claim we
-              expect to hold across models.
-            </p>
-            <div class="cluster-viz" data-concept="clusters">
-              <div class="cluster cloud-dialogue">
-                <span>Q&amp;A</span><span>advice</span><span>feelings</span><span>reply</span><span>intent</span>
-              </div>
-              <div class="cluster-divider"></div>
-              <div class="cluster cloud-docs">
-                <span>guide</span><span>manual</span><span>policy</span><span>procedure</span><span>support</span>
-              </div>
+      <div class="concept-row">
+        <div class="concept-copy" data-aos="fade-up">
+          <p class="mini-kicker">The signature in OLMo3</p>
+          <h3>Two flavors of text carry social reasoning.</h3>
+          <p>
+            Social reasoning's influence profile across the 576 corpus bins looks unlike the
+            profiles of STEM reasoning and the two knowledge tasks, which closely resemble one
+            another. And the social-versus-STEM contrast is wider for the reasoning pair than
+            for the knowledge pair, while leaning the same direction in both.
+          </p>
+          <p>
+            Read the high-influence text and it comes in two flavors: interactional writing
+            (dialogue, questions and answers, lots of "you" and "I") and expository writing
+            about how people deal with each other, such as guides and manuals. STEM reasoning
+            draws instead on structured, technical text. The claim that travels is the shape of
+            the distribution, not any single corpus slice.
+          </p>
+        </div>
+        <figure class="finding-figure" data-aos="fade-up" data-aos-delay="120">
+          <div class="cluster-viz" data-concept="clusters">
+            <div class="cluster cloud-dialogue">
+              <span>Q&amp;A</span><span>advice</span><span>feelings</span><span>reply</span><span>intent</span>
+              <p class="cluster-name">interactional writing</p>
+            </div>
+            <div class="cluster-divider"></div>
+            <div class="cluster cloud-docs">
+              <span>guide</span><span>manual</span><span>policy</span><span>procedure</span><span>support</span>
+              <p class="cluster-name">people-centered documentation</p>
             </div>
           </div>
-        </article>
+        </figure>
+      </div>
 
-        <article class="finding-row" data-aos="fade-up">
-          <span class="finding-number">03</span>
-          <div>
-            <h3>The social-versus-STEM split is sharper for reasoning tasks than for knowledge tasks.</h3>
-            <p class="finding-explain">
-              Knowledge tasks ask the model to retrieve facts about a domain; reasoning tasks ask
-              it to work over one, so the two stress different training text. The social-minus-STEM
-              contrast is wider for the reasoning pair than for the knowledge pair, while leaning
-              the same direction in both.
-            </p>
-            <div class="finding-evidence">
-              <p>
-                At the topic level, reasoning leans social on topics like literature and
-                education, and leans STEM on topics like science &amp; technology and software
-                development.
-              </p>
-            </div>
-          </div>
-        </article>
 
-        <article class="finding-row" data-aos="fade-up">
-          <span class="finding-number">04</span>
-          <div>
-            <h3>The causal check: forgetting the flagged data weakens the matching skill.</h3>
-            <p class="finding-explain">
-              Correlation alone does not prove the flagged text matters, so we test it causally.
-              We make the model unlearn the high-influence regions and compare against unlearning
-              randomly chosen regions from the same topics. Influence-targeted forgetting damages
-              social reasoning more than the random controls; for the other tasks the effect is
-              weak or absent.
-            </p>
-            <div class="finding-evidence">
-              <p>
-                Unlearning validates load-bearing corpus regions in aggregate; it does not identify
-                individually causal documents or a full mechanism.
-              </p>
-            </div>
-          </div>
-        </article>
+      <div class="concept-row contrast-row">
+        <figure class="finding-figure" data-aos="fade-up">
+        <svg class="split-fig" viewBox="0 0 640 250" role="img" aria-label="Two diverging bars around a shared zero line compare the social versus STEM contrast. The reasoning pair spans delta z up to 0.91 in each direction while the knowledge pair spans up to 0.63, leaning the same way in both.">
+          <text x="180" y="28" class="sf-axis" text-anchor="middle">leans STEM</text>
+          <text x="460" y="28" class="sf-axis" text-anchor="middle">leans social</text>
+          <text x="60" y="58" class="sf-name">Reasoning pair</text>
+          <text x="60" y="72" class="sf-sub">SocialIQA minus ARC-Challenge</text>
+          <rect x="84" y="80" width="236" height="26" rx="3" class="sf-bar-stem"></rect>
+          <rect x="320" y="80" width="236" height="26" rx="3" class="sf-bar-soc"></rect>
+          <text x="76" y="97" class="sf-val" text-anchor="end">0.91</text>
+          <text x="564" y="97" class="sf-val">0.91</text>
+          <text x="84" y="122" class="sf-topic">software development</text>
+          <text x="556" y="122" class="sf-topic" text-anchor="end">literature, education &amp; jobs</text>
+          <text x="60" y="150" class="sf-name">Knowledge pair</text>
+          <text x="60" y="164" class="sf-sub">MMLU Social Sciences minus MMLU STEM</text>
+          <rect x="157" y="172" width="163" height="26" rx="3" class="sf-bar-stem"></rect>
+          <rect x="320" y="172" width="163" height="26" rx="3" class="sf-bar-soc"></rect>
+          <text x="149" y="189" class="sf-val" text-anchor="end">0.63</text>
+          <text x="491" y="189" class="sf-val">0.63</text>
+          <line x1="320" y1="38" x2="320" y2="206" class="sf-zero"></line>
+          <text x="320" y="234" class="sf-note" text-anchor="middle">same direction in both pairs, about 1.4 times the spread for reasoning</text>
+        </svg>
+      </figure>
+        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+          <p class="mini-kicker">Reasoning versus knowledge</p>
+          <h3>The split is sharper for reasoning.</h3>
+          <p>
+            Knowledge tasks ask the model to retrieve facts about a domain. Reasoning tasks ask
+            it to work over one. The two stress different training text. Measured by the
+            strongest topic-level influence differences (|&Delta;z|) in OLMo3, the
+            social-minus-STEM contrast is about 1.4 times wider for the reasoning pair than for
+            the knowledge pair, while leaning the same direction in both.
+          </p>
+          <p>
+            At the topic level, reasoning leans social on literature and education and leans
+            STEM on science &amp; technology and software development. In this controlled 2 by 2
+            design, capability type differentiates corpus provenance more than domain does.
+          </p>
+        </div>
+      </div>
+
+      <div class="concept-row">
+        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+          <p class="mini-kicker">The causal check</p>
+          <h3>Forget the flagged text and the skill fades.</h3>
+          <p>
+            Correlation alone does not prove the flagged text matters. So we make the model
+            unlearn the high-influence regions and compare against unlearning randomly chosen
+            documents from the same topics. In OLMo3, influence-targeted forgetting damages
+            social reasoning far more than the random controls, while the effect on the other
+            benchmarks is weak or absent. The chart shows the extra
+            accuracy damage in percentage points for the topics where the gap is largest.
+          </p>
+          <p>
+            The check validates corpus regions in aggregate, not individually causal documents.
+            Which benchmark carries the effect can shift with the training corpus. The
+            benchmark-specific selectivity is what repeats.
+          </p>
+        </div>
+        <figure class="finding-figure" data-aos="fade-up">
+          <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart of extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA, by topic. Literature 17.53, Education and Jobs 15.03, Sports and Fitness 8.40, Fashion and Beauty 6.93, Home and Hobbies 6.87 percentage points.">
+            <text x="178" y="29" class="uf-label" text-anchor="end">Literature</text>
+            <rect x="190" y="12" width="370" height="26" rx="3" class="uf-bar"></rect>
+            <text x="570" y="29" class="uf-value">+17.53 pp</text>
+            <text x="178" y="73" class="uf-label" text-anchor="end">Education &amp; Jobs</text>
+            <rect x="190" y="56" width="317" height="26" rx="3" class="uf-bar"></rect>
+            <text x="517" y="73" class="uf-value">+15.03 pp</text>
+            <text x="178" y="117" class="uf-label" text-anchor="end">Sports &amp; Fitness</text>
+            <rect x="190" y="100" width="177" height="26" rx="3" class="uf-bar"></rect>
+            <text x="377" y="117" class="uf-value">+8.40 pp</text>
+            <text x="178" y="161" class="uf-label" text-anchor="end">Fashion &amp; Beauty</text>
+            <rect x="190" y="144" width="146" height="26" rx="3" class="uf-bar"></rect>
+            <text x="346" y="161" class="uf-value">+6.93 pp</text>
+            <text x="178" y="205" class="uf-label" text-anchor="end">Home &amp; Hobbies</text>
+            <rect x="190" y="188" width="145" height="26" rx="3" class="uf-bar"></rect>
+            <text x="345" y="205" class="uf-value">+6.87 pp</text>
+            <line x1="190" y1="6" x2="190" y2="220" class="uf-baseline"></line>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="data" class="paper-section">
+    <div class="paper-shell">
+      <div class="section-heading centered" data-aos="fade-up">
+        <p class="section-kicker">Data</p>
+        <h2>Fully open.</h2>
+        <p>The study is possible because the OLMo ecosystem opens every layer of the stack.</p>
+      </div>
+      <div class="open-stack" data-aos="fade-up" data-aos-delay="100">
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-microchip"></i></span>
+          <strong>OLMo 3</strong>
+          <small>The open-weights model whose skills we trace.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-database"></i></span>
+          <strong>Dolma 3</strong>
+          <small>The data OLMo 3 was trained on, with every document open for analysis.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-tags"></i></span>
+          <strong>WebOrganizer</strong>
+          <small>A labeling system that sorts datasets like Dolma into categories by topic and format.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-list-check"></i></span>
+          <strong>OLMo 3 evaluation suite</strong>
+          <small>Supplies the benchmarks that measure model abilities.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-scale-balanced"></i></span>
+          <strong>OLMES</strong>
+          <small>A shared standard for scoring those benchmarks.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="capabilities" class="paper-section">
+    <div class="paper-shell">
+      <div class="section-heading centered" data-aos="fade-up">
+        <p class="section-kicker">Expansion</p>
+        <h2>Beyond one social skill.</h2>
+        <p>
+          Social reasoning is not one thing. A held-out suite of probes runs through the same
+          attribution pipeline, testing how far the social reasoning lens extends across the
+          social space.
+        </p>
+      </div>
+      <div class="open-stack" data-aos="fade-up" data-aos-delay="100">
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-brain"></i></span>
+          <strong>Theory of mind</strong>
+          <small>Reasoning about what other people know, want, and believe.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-gavel"></i></span>
+          <strong>Moral judgment</strong>
+          <small>Everyday moral and normative choices.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-scale-unbalanced"></i></span>
+          <strong>Social bias</strong>
+          <small>Stereotypes and biased framing in social situations.</small>
+        </div>
+        <div class="open-card">
+          <span class="open-icon"><i class="fas fa-comment-dots"></i></span>
+          <strong>Pragmatics</strong>
+          <small>Reading implied meaning beyond the literal words.</small>
+        </div>
       </div>
     </div>
   </section>
@@ -502,14 +555,14 @@
   <section id="models" class="paper-section models-section">
     <div class="paper-shell">
       <div class="section-heading centered" data-aos="fade-up">
-        <p class="section-kicker">Models</p>
-        <h2>Does the pattern hold beyond OLMo3?</h2>
+        <p class="section-kicker">Expansion</p>
+        <h2>Beyond one model.</h2>
       </div>
       <div class="models-wrap">
         <p class="models-intro">
-          The pattern was measured first in OLMo3. The same pipeline is being re-run across a
-          family of open-data models &mdash; different corpora, different token budgets, same
-          question.
+          The same measurements are being re-run across a family of open-data models:
+          different corpora, different token budgets, same question. Which specific regions carry a skill can shift with the corpus. The
+          separation between capability distributions is the pattern we test for.
         </p>
         <div class="models-table-wrap" data-aos="fade-up">
           <table class="models-table">
@@ -568,65 +621,26 @@
             </tbody>
           </table>
         </div>
-        <p class="models-note">
-          The roster is qualitative on purpose: no numbers appear here until final cross-model
-          results land, and nothing is ever filled in for pending models. The base-versus-instruct
-          pair asks whether attribution shifts when the query model changes.
-        </p>
       </div>
     </div>
   </section>
 
-  <section id="limitations" class="paper-section">
-    <div class="paper-shell section-grid">
-      <div class="section-heading" data-aos="fade-up">
-        <p class="section-kicker">Limits</p>
-        <h2>What this study does and does not claim.</h2>
-      </div>
-      <div class="paper-copy" data-aos="fade-up" data-aos-delay="100">
-        <ul class="limitations-list">
-          <li>Attribution is an analytic lens, not an exact proof of causal necessity for individual documents; unlearning validates aggregate patterns without eliminating approximation error.</li>
-          <li>Analysis runs on a stratified working set sampled from the full corpus; results should not be read as characterizing every document the model saw.</li>
-          <li>Unlearning shows a corpus region materially supports the aligned benchmark; it does not explain the mechanism by which those documents shape model behavior.</li>
-          <li>The full deep-dive is measured on one open-data ecosystem (OLMo3 / Dolma3). Extensions to OLMo3 Instruct, Marin, DCLM, and Comma &mdash; and 32B-scale runs &mdash; are in progress; until they land, generalization across model families remains an open question.</li>
-        </ul>
-        <p class="takeaway">
-          The contrastive design probes the structure of capability provenance. It does not
-          evaluate, or make claims about, the social reasoning abilities of any population or
-          demographic group.
-        </p>
-      </div>
-    </div>
-  </section>
 
   <section id="resources" class="paper-section resources-section">
     <div class="paper-shell section-grid">
       <div class="section-heading" data-aos="fade-up">
         <p class="section-kicker">Resources</p>
-        <h2>Open artifacts, aggregate by design.</h2>
+        <h2>Open artifacts.</h2>
       </div>
       <div class="resource-list" data-aos="fade-up" data-aos-delay="100">
         <a href="https://github.com/eilab-gt/capabilibara" target="_blank" rel="noopener">
           <span class="resource-icon"><i class="fab fa-github"></i></span>
           <span><strong>Project repository</strong><small>The full pipeline, from attribution through unlearning.</small></span>
         </a>
-        <div class="resource-item resource-pending">
-          <span class="resource-icon"><i class="fas fa-database"></i></span>
-          <span><strong>Sampling manifests and influence matrix <span class="pending-badge">Pending</span></strong><small>The 576&times;4 bin-level influence matrix and sampling manifests; public release planned alongside the camera-ready release.</small></span>
-        </div>
-        <div class="resource-item resource-pending">
-          <span class="resource-icon"><i class="fas fa-table-cells"></i></span>
-          <span><strong>Cross-probe influence statistics <span class="pending-badge">Pending</span></strong><small>Aggregate bin-level lexical and influence profiles shared across the held-out social probes.</small></span>
-        </div>
-        <div class="resource-item resource-pending">
-          <span class="resource-icon"><i class="fas fa-eraser"></i></span>
-          <span><strong>Unlearning checkpoints <span class="pending-badge">Pending</span></strong><small>LoRA adapters and evaluation outputs for causal validation.</small></span>
-        </div>
-        <div class="resource-item resource-pending">
-          <span class="resource-icon"><i class="fas fa-cubes"></i></span>
-          <span><strong>Hugging Face <span class="pending-badge">Pending</span></strong><small>Influence matrices and aggregate artifacts on the Hub, available with the public release.</small></span>
-        </div>
-        <p class="resource-note"><small>Releases are aggregate, bin-level artifacts &mdash; document-level attribution scores are deliberately not released.</small></p>
+        <a href="https://huggingface.co/spaces/HCAI-Lab/capabilibara" target="_blank" rel="noopener">
+          <span class="resource-icon"><i class="fas fa-box-open"></i></span>
+          <span><strong>Data artifacts</strong><small>Influence matrices, sampling manifests, cross-probe statistics, unlearning checkpoints, and Hub artifacts.</small></span>
+        </a>
       </div>
     </div>
   </section>
@@ -659,8 +673,8 @@
 <footer class="footer paper-footer">
   <div class="paper-shell">
     <div class="footer-mark">
-      <p><strong>Capability Provenance</strong> &middot; in Language Models</p>
-      <p>Accepted at COLM 2026 Main Conference and SciFM Workshop.</p>
+      <p><strong>Capability Provenance</strong> in Language Models</p>
+      <p>Accepted at COLM 2026 Main Conference, SciFM Workshop, and Social Sim Workshop.</p>
       <p>
         <a href="https://arxiv.org/pdf/2606.19625" target="_blank" rel="noopener">Paper</a>
         <span>/</span>
@@ -675,7 +689,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script type="module" src="./static/js/figure1.js?v=20260729"></script>
+  <script type="module" src="./static/js/figure1.js?v=20260802"></script>
+  <script type="module" src="./static/js/influence-anim.js?v=20260802"></script>
 <script type="module" src="./static/js/main.js?v=20260729"></script>
 </body>
 </html>

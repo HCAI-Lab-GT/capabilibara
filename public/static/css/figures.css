@@ -40,13 +40,13 @@
   align-items: center;
   gap: 0.4rem;
   min-height: 34px;
-  border: 1px solid #dfd5e4;
+  border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #fbf8fc;
+  background: #ffffff;
   color: var(--slate);
   padding: 0.3rem 0.72rem;
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
 }
@@ -150,7 +150,7 @@
   width: 0%;
   height: 100%;
   border-radius: 8px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   pointer-events: none;
 }
 
@@ -159,8 +159,17 @@
 }
 
 .fig1 .f1-title {
-  font-weight: 800;
-  fill: var(--primary-color);
+  font-family: "Castoro", Georgia, serif;
+  font-weight: 400;
+  fill: var(--ink);
+}
+
+.fig1 .f1-kicker {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  fill: var(--faint);
 }
 
 .fig1 .f1-label {
@@ -263,6 +272,7 @@
 .tax-grid {
   display: grid;
   grid-template-columns: repeat(24, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
   gap: 2px;
   width: 100%;
   aspect-ratio: 1;
@@ -283,21 +293,18 @@
   transform: scale(1);
 }
 
-.tax-cell.is-social {
-  background: rgba(118, 42, 131, 0.78);
+.tax-cell.is-example {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: var(--soc-reason, #762a83);
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 700;
 }
 
-.tax-cell.is-knowledge {
-  background: rgba(47, 111, 168, 0.82);
-}
-
-.tax-cell.is-negative {
-  background: rgba(179, 88, 6, 0.84);
-}
-
-.taxonomy-viz.is-visible .tax-cell.is-social,
-.taxonomy-viz.is-visible .tax-cell.is-knowledge,
-.taxonomy-viz.is-visible .tax-cell.is-negative {
+.taxonomy-viz.is-visible .tax-cell.is-example {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.84), 0 0 18px rgba(118, 42, 131, 0.2);
 }
 
@@ -307,6 +314,20 @@
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-top: 0.8rem;
+}
+
+.tax-labels .tax-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  margin-right: 0.42rem;
+  border-radius: 4px;
+  background: var(--soc-reason, #762a83);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
 }
 
 .tax-labels span {
@@ -443,10 +464,16 @@
   height: auto;
 }
 
-.influence-viz .infl-panel rect {
+.influence-viz .infl-doc {
   fill: #ffffff;
   stroke: var(--hairline);
   stroke-width: 1.2;
+}
+
+.influence-viz .infl-doc-line {
+  stroke: var(--faint);
+  stroke-width: 1.4;
+  stroke-linecap: round;
 }
 
 .influence-viz .infl-title {
@@ -476,6 +503,16 @@
 .influence-viz .infl-arrow.infl-neg { stroke: var(--infl-neg, #B35806); }
 .influence-viz .infl-head.infl-neg { fill: var(--infl-neg, #B35806); }
 
+.influence-viz .infl-pos-label {
+  fill: var(--infl-pos, #2F6FA8);
+  font-weight: 700;
+}
+
+.influence-viz .infl-neg-label {
+  fill: var(--infl-neg, #B35806);
+  font-weight: 700;
+}
+
 .influence-viz .infl-panel {
   opacity: 0;
   transform: translateY(14px);
@@ -490,6 +527,35 @@
   transform: translateY(0);
 }
 
+/* Animated explainer replaces the static SVG when GSAP + motion are available */
+.influence-viz.has-anim .infl-static {
+  display: none;
+}
+
+.influence-viz .infl-anim {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.infl-anim .ia-caption {
+  fill: var(--muted, #62636a);
+  font-family: "Noto Sans", Arial, sans-serif;
+  font-size: 11.5px;
+}
+
+.infl-anim .ia-label {
+  fill: var(--faint, #8a8790);
+  font-family: "Noto Sans", Arial, sans-serif;
+  font-size: 10.5px;
+}
+
+.infl-anim .ia-chip {
+  font-family: "Noto Sans", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* ================= Cluster animation ================= */
 .cluster-viz {
   padding: 1rem;
@@ -498,8 +564,8 @@
   background: #fffdf8;
 }
 
-.finding-row .cluster-viz {
-  margin-top: 1.3rem;
+.finding-figure .cluster-viz {
+  margin: 0;
 }
 
 .cluster-viz {
@@ -509,6 +575,14 @@
   align-items: center;
   min-height: 240px;
   overflow: hidden;
+}
+
+.cluster .cluster-name {
+  margin: 196px 0 0;
+  color: var(--faint);
+  font-size: 0.76rem;
+  font-style: italic;
+  text-align: center;
 }
 
 .cluster-divider {

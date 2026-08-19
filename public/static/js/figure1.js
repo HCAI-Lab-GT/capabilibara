@@ -3,20 +3,21 @@
  GSAP is unavailable or the user prefers reduced motion.
 
  Stages:
-   1) Corpus Construction — open corpus -> dedup -> topic × format taxonomy
-   2) Training Data Attribution — benchmark probes -> Bergson/TrackStar scoring
-   3) Influence Map — signed influence per corpus region (illustrative values)
-   4) Unlearning Check — targeted vs random forgetting (schematic)
+   1) Corpus Construction — Dolma3 -> dedup -> WebOrganizer 24×24 taxonomy
+   2) Training Data Attribution — 2×2 benchmark design -> Bergson/TrackStar
+   3) Influence Map — signed z per tracked bin (real values from the paper)
+   4) Unlearning Check — influence-targeted vs random forgetting (real Δ)
 
- This figure teaches the METHOD; it deliberately carries no result numbers.
- Scenes 3–4 use clearly-labeled illustrative values so the walkthrough stays
- correct while quantitative results are rerun across models (maintainer
- decision, 2026-07-29). */
+ Scenes 3–4 carry the actual OLMo3-7B/Dolma3 numbers from the paper's
+ Figure 1 and §4, always labeled with the model, since Comma-2T results
+ differ (maintainer decision, 2026-08-02, superseding the earlier
+ illustrative-values-only rule). Six bins B1–B6 are tracked through every
+ stage as the figure's through-line. */
 
 var NS = "http://www.w3.org/2000/svg";
 var VB_W = 880, VB_H = 360;
 
-// Shared 8x8 grid geometry (scenes 1 & 2) + its center (beam convergence point).
+// Shared 8x8 grid geometry (scene 1) + its center (fan convergence point).
 var GRID = { x: 512, y: 72, cs: 30, gap: 2, n: 8 };
 var GRID_W = GRID.n * (GRID.cs + GRID.gap) - GRID.gap; // 254
 var GCX = GRID.x + GRID_W / 2;                          // grid center X
@@ -27,38 +28,48 @@ var C = {
   socReason: "#762A83", socKnow: "#8C6D1F",
   stemReason: "#A14F00", stemKnow: "#1B7837",
   slate: "#4B5563", grid: "#c9b8cf", gridFill: "#efe6f2",
-  doc: "#b9a7c0"
+  ink: "#171717", faint: "#8a8790", hairline: "#ded9ce"
 };
 
-// ---- presentation: chip labels + colors (order matches BENCHMARKS) ----
+// ---- the 2×2 benchmark design: domain (social/STEM) × capability ----
 var BENCH = [
-  { name: "SocialIQA",  color: C.socReason },
-  { name: "MMLU SS",    color: C.socKnow },
-  { name: "ARC-Chal.",  color: C.stemReason },
-  { name: "MMLU STEM",  color: C.stemKnow }
+  { name: "SocialIQA",  sub: "social reasoning",  color: C.socReason },
+  { name: "MMLU SS",    sub: "social knowledge",  color: C.socKnow },
+  { name: "ARC-Chal.",  sub: "STEM reasoning",    color: C.stemReason },
+  { name: "MMLU STEM",  sub: "STEM knowledge",    color: C.stemKnow }
 ];
 
-// Scene 3 data — ILLUSTRATIVE ONLY. Rows are format-level corpus regions;
-// values sketch the qualitative pattern (conversational text supports social
-// reasoning, technical text supports STEM) without quoting any real result.
+// ---- six bins tracked through every stage (paper Fig. 1) ----
+var BINS = [
+  { id: "B1", short: "Lit × Support",     grid: [1, 1] },
+  { id: "B2", short: "Social × Q&A",      grid: [6, 4] },
+  { id: "B3", short: "Travel × Q&A",      grid: [7, 6] },
+  { id: "B4", short: "Sci&T × Academic",  grid: [5, 1] },
+  { id: "B5", short: "Industrial × Docs", grid: [2, 5] },
+  { id: "B6", short: "Politics × Docs",   grid: [4, 6] }
+];
+
+// Scene 3 data — real signed z-scores from the paper's Figure 1 (OLMo3-7B).
+// Rows are benchmarks, columns the six tracked bins B1–B6.
 var INFLUENCE = {
-  cols: BENCH.map(function (b) { return b.name; }),
+  cols: BINS.map(function (b) { return b.short; }),
   rows: [
-    { label: "Conversational", v: [2.6, -1.1, -0.4, -0.9], sig: 0 },
-    { label: "Personal stories", v: [1.4, 0.1, -0.5, -0.2] },
-    { label: "Reference & docs", v: [0.2, 1.6, 1.2, 1.5] },
-    { label: "Technical & code", v: [-0.8, 0.5, 2.1, 1.8] }
+    { label: "SocialIQA",   color: C.socReason,  v: [16.0, 1.9, 0.5, 0.1, 6.5, 0.4], sig: 0 },
+    { label: "MMLU SS",     color: C.socKnow,    v: [-7.3, -0.1, 1.1, 2.2, 7.0, 6.9] },
+    { label: "ARC-Chal.",   color: C.stemReason, v: [-0.5, -0.8, -3.4, 2.7, 8.6, 1.6] },
+    { label: "MMLU STEM",   color: C.stemKnow,   v: [-5.7, -0.5, -0.6, 3.1, 8.4, 5.6] }
   ]
 };
 
-// Scene 4 data — schematic: the logic of the unlearning check, not a result.
-var UNLEARN = {
-  cols: ["Damage to matched skill"],
-  rows: [
-    { label: "Forget flagged data", v: [1.3] },
-    { label: "Forget random data", v: [0.3] }
-  ]
-};
+// Scene 4 data — real paired unlearning result for SocialIQA (paper §4.3 /
+// Fig. 1): Δ = influence-targeted − random accuracy damage, in pp, per topic.
+var UNLEARN = [
+  { label: "Literature",       v: 17.53 },
+  { label: "Education & Jobs", v: 15.03 },
+  { label: "Sports & Fitness", v: 8.40 },
+  { label: "Fashion & Beauty", v: 6.93 },
+  { label: "Home & Hobbies",   v: 6.87 }
+];
 
 var STAGES = [
   { icon: "1", title: "Corpus Construction" },
@@ -67,10 +78,10 @@ var STAGES = [
   { icon: "4", title: "Unlearning" }
 ];
 var CAPTIONS = [
-  "<strong>1) Build a labeled corpus.</strong> The fully open training corpus is de-duplicated and every document is labeled by topic and format &mdash; 24 topics &times; 24 formats, <strong>576 bins</strong> in all.",
-  "<strong>2) Score every region.</strong> For each benchmark, gradient-based attribution (TrackStar via Bergson) estimates how much each corpus region supported the model's answers. Positive influence supports the skill; negative opposes it.",
-  "<strong>3) Read the map.</strong> Averaging over each region turns noisy per-document scores into a readable map <em>(values shown are illustrative)</em>. Regions rich in conversational, people-centered text light up for social reasoning; technical regions light up for STEM.",
-  "<strong>4) Check it causally.</strong> Make the model forget the flagged regions and re-test it <em>(schematic)</em>. Targeted forgetting weakens the matched skill more than forgetting random comparable data &mdash; evidence the map tracks something real."
+  "<strong>1) Build a labeled corpus.</strong> The Dolma3 mix is de-duplicated to ~1.26B unique documents and labeled with WebOrganizer's 24 topics &times; 24 formats: <strong>576 bins</strong>. A stratified working set samples 10,000 documents per bin (5.68M documents). Six bins, B1&ndash;B6, are tracked through every stage.",
+  "<strong>2) Score every region.</strong> Four benchmarks form a 2&times;2 design: domain (social vs. STEM) crossed with capability (reasoning vs. knowledge). TrackStar, via Bergson, compares document gradients from OLMo3-7B Base with query gradients from OLMo3-7B Instruct, yielding a signed score for every bin &times; benchmark.",
+  "<strong>3) Read the map.</strong> Bin-level averages, z-scored within each benchmark <em>(OLMo3-7B)</em>. Literature &times; Customer Support is extreme for SocialIQA (+16.0) yet negative for the three comparison benchmarks, whose support concentrates in documentation-heavy bins.",
+  "<strong>4) Check it causally.</strong> Per topic, forget the top-200 documents by influence versus 1,000 random same-topic documents (NGDiff, rank-8 LoRA, OLMo3-7B Base). Influence-targeted forgetting damages SocialIQA far more than random controls (paired Wilcoxon p &asymp; 10<sup>&minus;5</sup>)."
 ];
 
 // ---- helpers ----
@@ -91,28 +102,25 @@ function mix(c1, c2, t) {
   var a = hex(c1), b = hex(c2);
   return "rgb(" + Math.round(lerp(a[0], b[0], t)) + "," + Math.round(lerp(a[1], b[1], t)) + "," + Math.round(lerp(a[2], b[2], t)) + ")";
 }
-// influence: blue (+) / orange (-), diverging from near-white — matches the site-wide signed scale
+// influence: blue (+) / orange (-), diverging from near-white; capped at |z| = 3
+// like the paper's color scale so the ±16 outlier saturates rather than washing
+// out every other cell.
 function inflColor(z) {
-  var t = Math.min(Math.abs(z) / 3.1, 1);
-  return z >= 0 ? mix("#f7f7f7", "#2F6FA8", t) : mix("#f7f7f7", "#B35806", Math.min(Math.abs(z) / 1.2, 1));
+  var t = Math.min(Math.abs(z) / 3, 1);
+  return z >= 0 ? mix("#f7f7f7", "#2F6FA8", t) : mix("#f7f7f7", "#B35806", t);
 }
-function inflInk(z) { return Math.min(Math.abs(z) / 3.1, 1) > 0.55 ? "#fff" : "#222"; }
-// unlearning-check scale (schematic): positive (damage) blue, negative orange;
-// normalized to the illustrative max used in UNLEARN.
-function accColor(d) {
-  return d >= 0 ? mix("#eff3ff", "#2F6FA8", Math.min(d / 1.6, 1))
-                : mix("#f7f7f7", "#B35806", Math.min(Math.abs(d) / 1.6, 1));
+function inflInk(z) { return Math.min(Math.abs(z) / 3, 1) > 0.55 ? "#fff" : "#222"; }
+function fmt(v, plus, decimals) {
+  return (v >= 0 && plus ? "+" : "") + v.toFixed(decimals == null ? 2 : decimals);
 }
-function accInk(d) { return Math.min(Math.abs(d) / 1.6, 1) > 0.5 ? "#fff" : "#222"; }
-function fmt(v, plus) { return (v >= 0 && plus ? "+" : "") + v.toFixed(2); }
 
 // ================= scene builders =================
-// Each returns { g: <g>, enter: function(gsap)->timeline }
+// Each returns a <g> with an _enter(gsap) -> timeline method.
 
 // soft multi-hue palette used to suggest distinct strata/bins
-var STRATA = ["#762A83", "#8C6D1F", "#A14F00", "#1B7837", "#006D5B", "#4575B4", "#67A9CF", "#4B5563"];
+var STRATA = ["#762A83", "#8C6D1F", "#A14F00", "#1B7837", "#2F6FA8", "#5589B9", "#87B7D5", "#4B5563"];
 
-// a "document" page glyph: rounded page with a folded corner + text lines (fills its height)
+// a "document" page glyph: rounded page with a folded corner + text lines
 function docGlyph(parent, x, y, w, h) {
   var fold = Math.min(8, w * 0.22), gg = el("g", {}, parent);
   el("path", {
@@ -120,12 +128,12 @@ function docGlyph(parent, x, y, w, h) {
        " H" + (x + w - fold) + " L" + (x + w) + " " + (y + fold) +
        " V" + (y + h - 3) + " Q" + (x + w) + " " + (y + h) + " " + (x + w - 3) + " " + (y + h) +
        " H" + (x + 3) + " Q" + x + " " + (y + h) + " " + x + " " + (y + h - 3) + " Z",
-    fill: "#ffffff", stroke: "#b79bc4", "stroke-width": 1.2, "stroke-linejoin": "round"
+    fill: "#ffffff", stroke: "#c4bbaf", "stroke-width": 1.1, "stroke-linejoin": "round"
   }, gg);
-  el("path", { d: "M" + (x + w - fold) + " " + y + " V" + (y + fold) + " H" + (x + w) + " Z", fill: "#e3d4ea" }, gg);
+  el("path", { d: "M" + (x + w - fold) + " " + y + " V" + (y + fold) + " H" + (x + w) + " Z", fill: "#efe9dd" }, gg);
   var ly = y + 10, li = 0;
   while (ly < y + h - 6) {
-    el("rect", { x: x + 5, y: ly, width: w - 10 - (li % 3 === 2 ? 7 : 0), height: 2.2, rx: 1.1, fill: "#c9b3d1" }, gg);
+    el("rect", { x: x + 5, y: ly, width: w - 10 - (li % 3 === 2 ? 7 : 0), height: 2.2, rx: 1.1, fill: "#d9d3c6" }, gg);
     ly += 6; li++;
   }
   return gg;
@@ -133,16 +141,16 @@ function docGlyph(parent, x, y, w, h) {
 
 function sceneCorpus(root) {
   var g = el("g", { opacity: 0 }, root);
-  // Dolma3 = a block of document pages filling the SAME area as the 576-bin grid
+  // Dolma3 = a block of document pages filling the SAME area as the bin grid
   var blockW = GRID_W;
   var docCols = 5, docRows = 4;
   var pitchX = blockW / docCols, pitchY = blockW / docRows;
-  var pageW = pitchX * 0.72, pageH = pitchY * 0.78; // page-shaped (taller than wide)
+  var pageW = pitchX * 0.72, pageH = pitchY * 0.78;
   var docX = 40, docY = GCY - blockW / 2;
-  txt(g, docX + blockW / 2, docY - 16, "Open training corpus",
-    { class: "f1-label", "font-size": 13, "font-weight": 700, "text-anchor": "middle" });
-  txt(g, docX + blockW / 2, docY + blockW + 18, "de-duplicated corpus — not all documents are used",
-    { class: "f1-label", "font-size": 11, "text-anchor": "middle", fill: C.slate });
+  txt(g, docX + blockW / 2, docY - 24, "Dolma3 web corpus", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
+  txt(g, docX + blockW / 2, docY - 8, "de-duplicated, ~1.26B unique documents", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
+  var sampleLbl = txt(g, docX + blockW / 2, docY + blockW + 18, "stratified working set: 10,000 docs per bin, 5.68M docs",
+    { class: "f1-label", "font-size": 11, "text-anchor": "middle", fill: C.slate, opacity: 0 });
   var docs = [];
   for (var i = 0; i < docCols * docRows; i++) {
     var col = i % docCols, rrow = Math.floor(i / docCols);
@@ -155,9 +163,9 @@ function sceneCorpus(root) {
   // lines all emanate from the middle of the corpus block
   var ox = docX + blockW - 4, oy = GCY;
 
-  // WebOrganizer 8x8 grid (right), title centered over the grid
-  txt(g, GCX, GRID.y - 20, "Label by topic × format · 576 bins", { class: "f1-title", "font-size": 13, "text-anchor": "middle" });
-  txt(g, GCX, GRID.y - 5, "24 topics × 24 formats", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
+  // WebOrganizer 24×24 grid (right), title centered over the grid
+  txt(g, GCX, GRID.y - 24, "WebOrganizer taxonomy: 576 bins", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
+  txt(g, GCX, GRID.y - 8, "24 topics × 24 formats", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
   var cells = [];
   for (var r = 0; r < GRID.n; r++) for (var c = 0; c < GRID.n; c++) {
     cells.push(el("rect", {
@@ -166,11 +174,10 @@ function sceneCorpus(root) {
       fill: C.gridFill, stroke: C.grid, "stroke-width": 1, opacity: 0
     }, g));
   }
-
-  // stratification: many rounded lines from the middle of the corpus fanning into spread bins
+  // stratification: many rounded lines from the corpus fanning into spread bins
   var fan = [];
   for (var rr = 0; rr < GRID.n; rr++) {
-    var picks = [1 + (rr % 4), 4 + (rr % 3)]; // two target columns per row
+    var picks = [1 + (rr % 4), 4 + (rr % 3)];
     picks.forEach(function (cc, j) {
       var cx = GRID.x + cc * (GRID.cs + GRID.gap) + GRID.cs / 2;
       var cy = GRID.y + rr * (GRID.cs + GRID.gap) + GRID.cs / 2;
@@ -184,22 +191,37 @@ function sceneCorpus(root) {
     });
   }
 
+  // the six tracked bins, marked in place on the grid (after the fan so the
+  // marks sit above the flow lines)
+  var marks = BINS.map(function (b) {
+    var r = b.grid[0], c = b.grid[1];
+    var x = GRID.x + c * (GRID.cs + GRID.gap), y = GRID.y + r * (GRID.cs + GRID.gap);
+    var mg = el("g", { opacity: 0 }, g);
+    el("rect", { x: x, y: y, width: GRID.cs, height: GRID.cs, rx: 4, fill: "#ffffff", stroke: C.ink, "stroke-width": 1.3 }, mg);
+    txt(mg, x + GRID.cs / 2, y + GRID.cs / 2 + 3.5, b.id, { fill: C.ink, "font-size": 10, "font-weight": 700, "text-anchor": "middle" });
+    return mg;
+  });
+
   g._enter = function (gsap) {
     var tl = gsap.timeline();
     gsap.set(docs, { opacity: 0 });
     gsap.set(cells, { opacity: 0 });
+    gsap.set(marks, { opacity: 0 });
+    gsap.set(sampleLbl, { opacity: 0 });
     tl.to(docs, { opacity: 1, duration: 0.4, stagger: 0.04 }, 0)
-      // fade ~a third of the documents: only a stratified sample is used
-      .to(docs.filter(function (_, i) { return i % 3 === 1; }), { opacity: 0.18, duration: 0.5 }, 0.7);
+      // fade ~a third of the documents: only a stratified sample is scored
+      .to(docs.filter(function (_, i) { return i % 3 === 1; }), { opacity: 0.18, duration: 0.5 }, 0.7)
+      .to(sampleLbl, { opacity: 1, duration: 0.4 }, 0.9);
     // draw the stratification lines from the middle of the corpus
     fan.forEach(function (p, i) {
       var len = p.getTotalLength();
       p.setAttribute("stroke-dasharray", len);
       p.setAttribute("stroke-dashoffset", len);
-      gsap.set(p, { opacity: 0.55 });
-      tl.to(p, { attr: { "stroke-dashoffset": 0 }, duration: 0.55 }, 0.9 + i * 0.035);
+      gsap.set(p, { opacity: 0.5 });
+      tl.to(p, { attr: { "stroke-dashoffset": 0 }, duration: 0.55, ease: "power2.out" }, 0.9 + i * 0.035);
     });
     tl.to(cells, { opacity: 1, duration: 0.5, stagger: { each: 0.012, from: "random" } }, 1.1);
+    tl.to(marks, { opacity: 1, duration: 0.35, stagger: 0.09 }, 1.9);
     return tl;
   };
   return g;
@@ -208,107 +230,138 @@ function sceneCorpus(root) {
 function sceneAttribution(root) {
   var g = el("g", { opacity: 0 }, root);
 
-  // probe chips (left), stack vertically centered on the grid center
-  var chipX = 30, chipW = 150, chipH = 34, chipPitch = 44;
-  var stackH = (BENCH.length - 1) * chipPitch + chipH;
-  var chipY0 = GCY - stackH / 2;
-  txt(g, chipX + chipW / 2, chipY0 - 14, "Benchmark probes",
-    { class: "f1-label", "font-size": 13, "font-weight": 700, "text-anchor": "middle" });
-  var chips = [], chipCY = [];
-  BENCH.forEach(function (b, i) {
-    var y = chipY0 + i * chipPitch;
-    chipCY.push(y + chipH / 2);
-    var cg = el("g", { opacity: 0 }, g);
-    el("rect", { x: chipX, y: y, width: chipW, height: chipH, rx: 17, fill: b.color }, cg);
-    txt(cg, chipX + chipW / 2, y + 22, b.name, { fill: "#fff", "font-size": 13, "font-weight": 700, "text-anchor": "middle" });
-    chips.push(cg);
+  // ---- left: the 2×2 benchmark design, stepped so every chip has a clear
+  // horizontal lane for its beam ----
+  var chipW = 132, chipH = 44, pitch = 54, y0 = 80;
+  var colX = [92, 240];
+  txt(g, colX[0] + chipW / 2, 66, "reasoning", { class: "f1-kicker", "text-anchor": "middle" });
+  txt(g, colX[1] + chipW / 2, 66, "knowledge", { class: "f1-kicker", "text-anchor": "middle" });
+  var rowMid = [y0 + pitch / 2 + chipH / 2 - 5, y0 + 2 * pitch + pitch / 2 + chipH / 2 - 5];
+  txt(g, 74, rowMid[0], "social", { class: "f1-kicker", "text-anchor": "middle", transform: "rotate(-90 74 " + rowMid[0] + ")" });
+  txt(g, 74, rowMid[1], "STEM", { class: "f1-kicker", "text-anchor": "middle", transform: "rotate(-90 74 " + rowMid[1] + ")" });
+
+  // geometry shared by chips, box, bins, and beams
+  var lanes = BENCH.map(function (_, i) { return y0 + i * pitch + chipH / 2; });
+  var boxX = 420, boxW = 160, boxY = 128, boxH = 96;
+  var binX = 620, binW = 240, binH = 30, binPitch = 38;
+  var binY0 = (VB_H - (BINS.length * binPitch - (binPitch - binH))) / 2;
+  var binMid = BINS.map(function (_, i) { return binY0 + i * binPitch + binH / 2; });
+
+  // beams first, so every card sits above them: queries flow into the scorer…
+  var inBeams = BENCH.map(function (b, i) {
+    var sx = colX[i % 2] + chipW, sy = lanes[i];
+    var ty = boxY + 20 + i * 19;
+    var cx1 = sx + (boxX - sx) * 0.45, cx2 = sx + (boxX - sx) * 0.7;
+    return el("path", {
+      d: "M " + sx + " " + sy + " C " + cx1 + " " + sy + " " + cx2 + " " + ty + " " + boxX + " " + ty,
+      fill: "none", stroke: b.color, "stroke-width": 1.8, "stroke-linecap": "round", opacity: 0
+    }, g);
   });
-  var chipRight = chipX + chipW;
+  // …and scores flow out to every tracked bin
+  var outBeams = BINS.map(function (_, i) {
+    var sx = boxX + boxW, sy = boxY + 14 + i * 14;
+    var cx1 = sx + (binX - sx) * 0.45, cx2 = sx + (binX - sx) * 0.7;
+    return el("path", {
+      d: "M " + sx + " " + sy + " C " + cx1 + " " + sy + " " + cx2 + " " + binMid[i] + " " + binX + " " + binMid[i],
+      fill: "none", stroke: C.slate, "stroke-width": 1.2, "stroke-linecap": "round", opacity: 0
+    }, g);
+  });
 
-  // grid (right) — the 576 bins that get scored
-  var cells = [];
-  for (var r = 0; r < GRID.n; r++) for (var c = 0; c < GRID.n; c++) {
-    cells.push(el("rect", {
-      x: GRID.x + c * (GRID.cs + GRID.gap), y: GRID.y + r * (GRID.cs + GRID.gap),
-      width: GRID.cs, height: GRID.cs, rx: 3,
-      fill: C.gridFill, stroke: C.grid, "stroke-width": 1
-    }, g));
-  }
-  txt(g, GCX, GRID.y - 20, "Bergson · TrackStar", { class: "f1-title", "font-size": 13, "text-anchor": "middle" });
-  txt(g, GCX, GRID.y - 5, "gradient attribution: score every bin", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
-  var matrixLbl = txt(g, GCX, GRID.y + GRID_W + 20, "→ signed influence for all 576 bins × 4 benchmarks",
-    { class: "f1-label", "font-size": 11, "font-weight": 700, "text-anchor": "middle", fill: C.socReason, opacity: 0 });
+  var chips = BENCH.map(function (b, i) {
+    var x = colX[i % 2], y = y0 + i * pitch;
+    var cg = el("g", { opacity: 0 }, g);
+    el("rect", { x: x, y: y, width: chipW, height: chipH, rx: 4, fill: "#ffffff", stroke: C.hairline, "stroke-width": 1.1 }, cg);
+    el("circle", { cx: x + 14, cy: y + 16, r: 4, fill: b.color }, cg);
+    txt(cg, x + 24, y + 20, b.name, { fill: C.ink, "font-size": 12.5, "font-weight": 600 });
+    txt(cg, x + 24, y + 34, b.sub, { fill: C.faint, "font-size": 10 });
+    return { g: cg };
+  });
 
-  // beams: each probe's gradient is compared against the bins
-  var beams = [];
-  var ctrlX = Math.round((chipRight + GCX) / 2);
-  BENCH.forEach(function (b, i) {
-    var y = chipCY[i];
-    beams.push(el("path", {
-      d: "M " + chipRight + " " + y + " Q " + ctrlX + " " + y + " " + GCX + " " + GCY,
-      fill: "none", stroke: b.color, "stroke-width": 2.2, opacity: 0, "stroke-linecap": "round"
-    }, g));
+  // ---- center: the scoring engine ----
+  var box = el("g", { opacity: 0 }, g);
+  el("rect", { x: boxX, y: boxY, width: boxW, height: boxH, rx: 6, fill: "#ffffff", stroke: C.hairline, "stroke-width": 1.2 }, box);
+  txt(box, boxX + boxW / 2, boxY + 22, "gradient attribution", { class: "f1-kicker", "text-anchor": "middle" });
+  txt(box, boxX + boxW / 2, boxY + 46, "Bergson / TrackStar", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
+  txt(box, boxX + boxW / 2, boxY + 68, "signed score per", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
+  txt(box, boxX + boxW / 2, boxY + 83, "bin × benchmark", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
+  var gradNote = txt(g, boxX + boxW / 2, boxY + boxH + 22, "doc gradients: OLMo3-7B Base", { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle", opacity: 0 });
+  var gradNote2 = txt(g, boxX + boxW / 2, boxY + boxH + 36, "query gradients: OLMo3-7B Instruct", { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle", opacity: 0 });
+
+  // ---- right: the six tracked bins ----
+  txt(g, binX + binW / 2, binY0 - 14, "six tracked bins of 576", { class: "f1-kicker", "text-anchor": "middle" });
+  var binChips = BINS.map(function (b, i) {
+    var y = binY0 + i * binPitch;
+    var bg = el("g", { opacity: 0 }, g);
+    el("rect", { x: binX, y: y, width: binW, height: binH, rx: 3, fill: "#ffffff", stroke: C.hairline, "stroke-width": 1.1 }, bg);
+    txt(bg, binX + 12, y + binH / 2 + 3.5, b.id, { fill: C.ink, "font-size": 10.5, "font-weight": 700 });
+    txt(bg, binX + 36, y + binH / 2 + 3.5, b.short, { fill: C.slate, "font-size": 10.5 });
+    return { g: bg };
   });
 
   g._enter = function (gsap) {
     var tl = gsap.timeline();
-    gsap.set(chips, { opacity: 0 });
-    gsap.set(cells, { fill: C.gridFill });
-    gsap.set(matrixLbl, { opacity: 0 });
-    tl.to(chips, { opacity: 1, duration: 0.35, stagger: 0.12 }, 0);
-    beams.forEach(function (bm, i) {
+    gsap.set(chips.map(function (c) { return c.g; }), { opacity: 0 });
+    gsap.set(box, { opacity: 0 });
+    gsap.set([gradNote, gradNote2], { opacity: 0 });
+    gsap.set(binChips.map(function (b) { return b.g; }), { opacity: 0 });
+    tl.to(chips.map(function (c) { return c.g; }), { opacity: 1, duration: 0.35, stagger: 0.1 }, 0)
+      .to(box, { opacity: 1, duration: 0.4 }, 0.5);
+    inBeams.forEach(function (bm, i) {
       var len = bm.getTotalLength();
       bm.setAttribute("stroke-dasharray", len);
       bm.setAttribute("stroke-dashoffset", len);
-      bm.setAttribute("opacity", 0.8);
-      tl.to(bm, { attr: { "stroke-dashoffset": 0 }, duration: 0.55 }, 0.5 + i * 0.16);
+      bm.setAttribute("opacity", 0.85);
+      tl.to(bm, { attr: { "stroke-dashoffset": 0 }, duration: 0.5, ease: "power2.out" }, 0.8 + i * 0.14);
     });
-    // score every bin: wash the grid with a signed-influence field (blue supportive / orange suppressive)
-    cells.forEach(function (cell, idx) {
-      var r = Math.floor(idx / GRID.n), c = idx % GRID.n;
-      var z = 2.4 * Math.sin(r * 0.85 + 0.6) + 1.7 * Math.cos(c * 0.8) - 0.3;
-      tl.to(cell, { fill: inflColor(z), duration: 0.4 }, 1.25 + (r + c) * 0.03);
+    tl.to([gradNote, gradNote2], { opacity: 1, duration: 0.4, stagger: 0.1 }, 1.4);
+    outBeams.forEach(function (bm, i) {
+      var len = bm.getTotalLength();
+      bm.setAttribute("stroke-dasharray", len);
+      bm.setAttribute("stroke-dashoffset", len);
+      bm.setAttribute("opacity", 0.6);
+      tl.to(bm, { attr: { "stroke-dashoffset": 0 }, duration: 0.45, ease: "power2.out" }, 1.7 + i * 0.09);
     });
-    tl.to(matrixLbl, { opacity: 1, duration: 0.4 }, 1.95);
+    tl.to(binChips.map(function (b) { return b.g; }), { opacity: 1, duration: 0.3, stagger: 0.08 }, 1.9);
     return tl;
   };
   return g;
 }
 
-function heatScene(root, data, colorFn, inkFn, title) {
+function heatScene(root) {
   var g = el("g", { opacity: 0 }, root);
-  var nCol = data.cols.length;
-  var cw = nCol === 2 ? 150 : 96, ch = 38, gap = 4;
-  var nRow = data.rows.length;
-  // center the whole block (row-label gutter + grid) horizontally and vertically
+  var data = INFLUENCE;
+  var nCol = data.cols.length, nRow = data.rows.length;
+  var cw = 96, ch = 40, gap = 4;
   var labelGutter = 168;
   var gridW = nCol * (cw + gap) - gap;
   var x0 = (VB_W - (labelGutter + gridW)) / 2 + labelGutter;
   var gridH = nRow * (ch + gap) - gap;
-  var y0 = (VB_H + 40 - gridH) / 2; // leave headroom for the title
-  txt(g, VB_W / 2, 30, title, { class: "f1-title", "font-size": 14, "text-anchor": "middle" });
+  var y0 = (VB_H + 52 - gridH) / 2;
+  txt(g, VB_W / 2, 30, "Influence map: signed z per bin", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
+  txt(g, VB_W / 2, 48, "OLMo3-7B", { class: "f1-kicker", "text-anchor": "middle" });
 
-  // column headers
   data.cols.forEach(function (c, ci) {
-    txt(g, x0 + ci * (cw + gap) + cw / 2, y0 - 10, c, { class: "f1-label", "font-size": 11, "font-weight": 700, "text-anchor": "middle" });
+    txt(g, x0 + ci * (cw + gap) + cw / 2, y0 - 10, c, { class: "f1-label", "font-size": 10, "text-anchor": "middle" });
   });
   var cellObjs = [];
   data.rows.forEach(function (row, ri) {
     var y = y0 + ri * (ch + gap);
-    txt(g, x0 - 12, y + ch / 2 + 4, row.label, { class: "f1-label", "font-size": 12, "font-weight": 600, "text-anchor": "end" });
+    el("circle", { cx: x0 - labelGutter + 12, cy: y + ch / 2, r: 4, fill: row.color }, g);
+    txt(g, x0 - labelGutter + 22, y + ch / 2 + 4, row.label, { class: "f1-label", "font-size": 12, "font-weight": 600 });
     row.v.forEach(function (val, ci) {
       var x = x0 + ci * (cw + gap);
       var rect = el("rect", { x: x, y: y, width: cw, height: ch, rx: 4, fill: "#f4f4f4", opacity: 0 }, g);
-      if (row.sig === ci) { rect.setAttribute("stroke", C.socReason); rect.setAttribute("stroke-width", 0); rect._sig = true; }
+      if (row.sig === ci) { rect.setAttribute("stroke", C.socReason); rect.setAttribute("stroke-width", 0); }
       var label = txt(g, x + cw / 2, y + ch / 2 + 4, "", { class: "f1-cellval", "text-anchor": "middle", opacity: 0 });
       cellObjs.push({
         rect: rect, label: label, val: val,
-        color: val === null ? "#f1f1f1" : colorFn(val),
-        ink: val === null ? "#9ca3af" : inkFn(val),
+        color: inflColor(val), ink: inflInk(val),
         sig: row.sig === ci
       });
     });
   });
+  txt(g, VB_W / 2, y0 + gridH + 28, "blue = supportive, orange = suppressive, color capped at |z| = 3",
+    { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle" });
 
   g._enter = function (gsap) {
     var tl = gsap.timeline();
@@ -316,16 +369,53 @@ function heatScene(root, data, colorFn, inkFn, title) {
       var delay = 0.03 * i;
       tl.to(o.rect, { opacity: 1, fill: o.color, duration: 0.35 }, delay);
       tl.to(o.label, { opacity: 1, duration: 0.25 }, delay + 0.1);
-      if (o.val === null) {
-        tl.add(function () { o.label.textContent = "—"; o.label.setAttribute("fill", o.ink); }, delay + 0.1);
-      } else {
-        var proxy = { n: 0 };
-        tl.to(proxy, {
-          n: o.val, duration: 0.5,
-          onUpdate: function () { o.label.textContent = fmt(proxy.n, true); o.label.setAttribute("fill", o.ink); }
-        }, delay + 0.1);
-      }
-      if (o.sig) tl.to(o.rect, { attr: { "stroke-width": 3 }, duration: 0.3 }, delay + 0.4);
+      var proxy = { n: 0 };
+      tl.to(proxy, {
+        n: o.val, duration: 0.5,
+        onUpdate: function () { o.label.textContent = fmt(proxy.n, true, 1); o.label.setAttribute("fill", o.ink); }
+      }, delay + 0.1);
+      if (o.sig) tl.to(o.rect, { attr: { "stroke-width": 3 }, duration: 0.3 }, delay + 0.5);
+    });
+    return tl;
+  };
+  return g;
+}
+
+function barScene(root) {
+  var g = el("g", { opacity: 0 }, root);
+  var x0 = 250, maxW = 430, h = 28, pitch = 44;
+  var maxV = UNLEARN[0].v;
+  var y0 = 92;
+  txt(g, VB_W / 2, 30, "Unlearning check: SocialIQA", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
+  txt(g, VB_W / 2, 48, "Δ accuracy damage: influence-targeted minus random, in pp (OLMo3-7B)", { class: "f1-kicker", "text-anchor": "middle" });
+
+  var bars = UNLEARN.map(function (row, i) {
+    var y = y0 + i * pitch;
+    txt(g, x0 - 14, y + h / 2 + 4, row.label, { class: "f1-label", "font-size": 12, "font-weight": 600, "text-anchor": "end" });
+    var w = row.v / maxV * maxW;
+    var rect = el("rect", { x: x0, y: y, width: 0, height: h, rx: 3, fill: mix("#eff3ff", "#2F6FA8", 0.8) }, g);
+    var label = txt(g, x0 + 10, y + h / 2 + 4, "", { class: "f1-cellval", "font-size": 11.5, fill: C.ink, opacity: 0 });
+    return { rect: rect, label: label, w: w, v: row.v, y: y };
+  });
+  // baseline drawn after the bars so it squares off their left edge
+  el("line", { x1: x0, y1: y0 - 8, x2: x0, y2: y0 + UNLEARN.length * pitch - (pitch - h) + 8, stroke: C.slate, "stroke-width": 1.2 }, g);
+  txt(g, VB_W / 2, y0 + UNLEARN.length * pitch + 24, "top topics shown (paired Wilcoxon, BH-adjusted, p ≈ 10⁻⁵)",
+    { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle" });
+
+  g._enter = function (gsap) {
+    var tl = gsap.timeline();
+    bars.forEach(function (b, i) {
+      var at = 0.15 * i;
+      tl.to(b.rect, { attr: { width: b.w }, duration: 0.6, ease: "power2.out" }, at);
+      var proxy = { n: 0 };
+      tl.to(b.label, { opacity: 1, duration: 0.2 }, at + 0.25);
+      tl.to(proxy, {
+        n: b.v, duration: 0.55,
+        onUpdate: function () {
+          b.label.textContent = fmt(proxy.n, true, 2) + " pp";
+          b.label.setAttribute("x", x0 + Math.max(proxy.n / b.v, 0.01) * b.w + 10);
+        }
+      }, at + 0.1);
     });
     return tl;
   };
@@ -381,16 +471,33 @@ function build(container) {
   container.insertBefore(interactive, fallback);
   if (fallback) fallback.style.display = "none";
 
+  // Reserve the height of the tallest caption so stage changes never reflow
+  // the page (the caption block otherwise grows and shrinks per stage).
+  function lockCaptionHeight() {
+    var cur = caption.innerHTML;
+    var max = 0;
+    CAPTIONS.forEach(function (c) {
+      caption.innerHTML = c;
+      max = Math.max(max, caption.offsetHeight);
+    });
+    caption.innerHTML = cur;
+    caption.style.minHeight = max + "px";
+  }
+  lockCaptionHeight();
+  window.addEventListener("resize", lockCaptionHeight);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockCaptionHeight);
+
   // build scenes
   var scenes = [
     sceneCorpus(svg),
     sceneAttribution(svg),
-    heatScene(svg, INFLUENCE, inflColor, inflInk, "Influence Map (illustrative values)"),
-    heatScene(svg, UNLEARN, accColor, accInk, "Unlearning Check (schematic)")
+    heatScene(svg),
+    barScene(svg)
   ];
 
   var cur = -1, playing = true, tl = null, advance = null, progTween = null;
-  var DWELL = 1.7;
+  var started = false, autoPaused = false;
+  var DWELL = 0.9;
 
   function ctlBtn(label, aria) {
     var b = document.createElement("button");
@@ -399,13 +506,13 @@ function build(container) {
   }
 
   function goTo(i, manual) {
+    started = true;
     if (i < 0) i = scenes.length - 1;
     if (i >= scenes.length) i = 0;
     if (tl) tl.kill();
     if (advance) advance.kill();
     if (progTween) progTween.kill();
     scenes.forEach(function (s, idx) { if (idx !== i) gsap.set(s, { opacity: 0 }); });
-    // reset the incoming scene's animatable bits by rebuilding timeline fresh
     stageBtns.forEach(function (b, idx) { b.classList.toggle("is-active", idx === i); });
     caption.innerHTML = CAPTIONS[i];
     cur = i;
@@ -463,6 +570,21 @@ function build(container) {
   if (startStage >= 1 && startStage <= scenes.length) {
     goTo(startStage - 1, true);
     if (params.get("fig1end") && tl) tl.progress(1); // jump to final frame (screenshot aid)
+  } else if ("IntersectionObserver" in window) {
+    // Start only once scrolled into view, so the viewer sees stage 1 from the
+    // top. Pause while off screen, resume where it left off when back.
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (!started) goTo(0, false);
+          else if (autoPaused) { autoPaused = false; setPlaying(true); }
+        } else if (started && playing) {
+          autoPaused = true;
+          setPlaying(false);
+        }
+      });
+    }, { threshold: 0.25 });
+    io.observe(container);
   } else goTo(0, false);
 }
 

@@ -46,14 +46,9 @@ import { MODELS } from "./animations/socialtda-data.js";
     var grid = document.querySelector("[data-tax-grid]");
     if (!grid || grid.childElementCount) return;
 
-    var hotCells = {
-      "3-5": "is-social",
-      "4-15": "is-negative",
-      "8-9": "is-social",
-      "10-18": "is-knowledge",
-      "14-6": "is-negative",
-      "17-13": "is-knowledge",
-      "20-2": "is-social"
+    // Numbered cells match the numbered example chips under the grid.
+    var exampleCells = {
+      "4-6": 1, "7-14": 2, "11-19": 3, "2-3": 4, "15-9": 5, "19-16": 6
     };
 
     for (var r = 0; r < 24; r += 1) {
@@ -62,8 +57,11 @@ import { MODELS } from "./animations/socialtda-data.js";
         cell.className = "tax-cell";
         var delay = ((r * 19 + c * 13) % 130) * 6;
         cell.style.setProperty("--delay", delay + "ms");
-        var cls = hotCells[r + "-" + c];
-        if (cls) cell.classList.add(cls);
+        var n = exampleCells[r + "-" + c];
+        if (n) {
+          cell.classList.add("is-example");
+          cell.textContent = n;
+        }
         cell.setAttribute("aria-hidden", "true");
         grid.appendChild(cell);
       }
