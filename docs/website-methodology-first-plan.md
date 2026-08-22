@@ -198,7 +198,9 @@ and `main.js` must change in the same commit.
 ## Out-of-scope flags for the team
 
 - `press/bluf.md` and `press/tweet-thread.md` still carry the old numbers and
-  the signature-bin story; sync after the site lands.
+  the signature-bin story; sync after the site lands. (2026-08-22: the press
+  folder moved out of this repo into the private research repo's `press/`,
+  where the numbers were re-synced to the arXiv page.)
 - The on-page abstract should be re-synced when the camera-ready lands.
 - `og-card.png` tagline mentions Dolma3 (optional regeneration; no numbers on
   it).

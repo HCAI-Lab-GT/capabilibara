@@ -131,7 +131,7 @@ If you use this software, please cite the paper. GitHub's **"Cite this repositor
 ## License
 
 - **Code** in this repository is licensed under [AGPL-3.0](LICENSE).
-- **Website content** (`public/`, `press/`) is licensed under [CC BY-SA 4.0](LICENSE-website.md).
+- **Website content** (`public/`) is licensed under [CC BY-SA 4.0](LICENSE-website.md).
 
 ## Acknowledgments
 
