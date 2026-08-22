@@ -34,6 +34,7 @@
   --ink-gold: #6b5418;
   --ink-stem: #7a3c00;
   --ink-know: #145a2a;
+  --on-accent: #ffffff;
 }
 
 /* Dark theme (manual [data-theme] or system preference without JS).
@@ -69,6 +70,7 @@
   --ink-gold: #e4c887;
   --ink-stem: #eebd93;
   --ink-know: #9fd3ac;
+  --on-accent: #16121c;
 }
 
 /* No-JS fallback: follow the OS preference. The inline head script always
@@ -106,6 +108,7 @@
     --ink-gold: #e4c887;
     --ink-stem: #eebd93;
     --ink-know: #9fd3ac;
+    --on-accent: #16121c;
   }
 }
 
@@ -159,7 +162,7 @@ img {
 .paper-nav {
   min-height: var(--nav-height);
   background: var(--nav-bg);
-  border-bottom: 1px solid rgba(23, 23, 23, 0.08);
+  border-bottom: 1px solid var(--hairline);
   backdrop-filter: blur(18px);
   box-shadow: none;
 }
@@ -269,7 +272,7 @@ img {
 .publication-authors {
   max-width: 980px;
   margin: 1.7rem auto 0;
-  color: #262626;
+  color: var(--ink);
   font-family: "Noto Sans", Arial, sans-serif;
   font-size: 1.02rem;
 }
@@ -304,7 +307,7 @@ img {
   gap: 0.45rem;
   min-height: 42px;
   padding: 0.65rem 0.95rem;
-  border: 1px solid rgba(23, 23, 23, 0.14);
+  border: 1px solid var(--hairline);
   border-radius: 999px;
   background: rgba(255, 253, 248, 0.8);
   color: var(--ink);
@@ -428,7 +431,7 @@ img {
 }
 
 .paper-copy {
-  color: #252525;
+  color: var(--ink);
   font-size: 1.12rem;
 }
 
@@ -787,8 +790,8 @@ img {
 }
 
 .models-table .status-done {
-  color: #1B7837;
-  background: rgba(27, 120, 55, 0.1);
+  color: var(--ink-know);
+  background: var(--tint-know);
 }
 
 .models-table .status-pending {
@@ -804,7 +807,7 @@ img {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
-  border: 1px solid rgba(23, 23, 23, 0.12);
+  border: 1px solid var(--hairline);
   border-radius: 8px;
   overflow: hidden;
   background: var(--card-bg);
@@ -1218,23 +1221,24 @@ img {
   top: 0.7rem;
   right: 0.7rem;
   z-index: 2;
-  border: 1px solid rgba(23, 23, 23, 0.15);
+  border: 1px solid var(--hairline);
   border-radius: 999px;
   padding: 0.45rem 0.95rem;
-  background: #fff;
-  color: #171717;
+  background: var(--card-bg);
+  color: var(--ink);
   font-weight: 700;
   cursor: pointer;
 }
 
 .bibtex-copy:hover {
-  border-color: #171717;
+  border-color: var(--primary-text);
+  color: var(--primary-text);
 }
 
 .bibtex-copy.is-copied {
   background: var(--accent-green);
   border-color: var(--accent-green);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 
@@ -1508,7 +1512,7 @@ img {
   margin-right: 0.32rem;
   border-radius: 5px;
   background: var(--primary-color);
-  color: #ffffff;
+  color: var(--on-accent);
   font-size: 0.62rem;
   font-weight: 800;
 }
@@ -1686,7 +1690,7 @@ img {
 [data-theme="dark"] .fig1-stage-btn.is-active {
   border-color: var(--primary-color);
   background: var(--primary-color);
-  color: #ffffff;
+  color: var(--on-accent);
 }
 
 [data-theme="dark"] .paper-hero {

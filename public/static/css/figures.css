@@ -58,7 +58,7 @@
   width: 1.35rem;
   height: 1.35rem;
   border-radius: 50%;
-  background: #e5d8ea;
+  background: var(--icon-tint);
   color: var(--primary-color);
   font-size: 0.75rem;
   font-weight: 900;
@@ -67,7 +67,7 @@
 .fig1-stage-btn.is-active {
   border-color: var(--primary-color);
   background: var(--primary-color);
-  color: #ffffff;
+  color: var(--on-accent, #ffffff);
 }
 
 .fig1-stage-btn.is-active .num {
@@ -113,7 +113,7 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border: 1px solid #dfd5e4;
+  border: 1px solid var(--hairline);
   border-radius: 8px;
   background: var(--card-bg);
   color: var(--primary-text);
@@ -299,7 +299,7 @@
   justify-content: center;
   line-height: 1;
   background: var(--soc-reason, #762a83);
-  color: #ffffff;
+  color: var(--on-accent, #ffffff);
   font-size: 0.62rem;
   font-weight: 700;
 }
@@ -325,7 +325,7 @@
   margin-right: 0.42rem;
   border-radius: 4px;
   background: var(--soc-reason, #762a83);
-  color: #ffffff;
+  color: var(--on-accent, #ffffff);
   font-size: 0.68rem;
   font-weight: 700;
 }
@@ -599,7 +599,7 @@
   min-height: 32px;
   padding: 0.28rem 0.56rem;
   border-radius: 8px;
-  color: #ffffff;
+  color: var(--on-accent, #ffffff);
   font-weight: 850;
   opacity: 0;
   transform: translateY(16px) scale(0.94);
