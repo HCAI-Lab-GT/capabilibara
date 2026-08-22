@@ -5,7 +5,20 @@
   <meta name="description" content="Where does a language model's social reasoning come from? Training-data attribution traces model skills back to the open training text that supports them, explained in plain language and checked with unlearning.">
   <meta name="keywords" content="training data attribution, influence functions, capability provenance, social reasoning, language models, interpretability, OLMo, Dolma, unlearning">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f5ef">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#17161a">
   <title>Capability Provenance in Language Models: A Case Study in Social Reasoning</title>
+  <script>
+    /* Set theme before first paint to avoid a light/dark flash.
+       Priority: saved choice > system preference. main.js owns toggling. */
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem("theme"); } catch (e) {}
+      var dark = saved ? saved === "dark"
+        : window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    })();
+  </script>
 
   <link rel="canonical" href="https://eilab.gatech.edu/capabilibara/">
   <meta property="og:type" content="website">
@@ -69,36 +82,61 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Castoro:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-  <link rel="stylesheet" href="./static/css/index.css?v=20260802">
-  <link rel="stylesheet" href="./static/css/figures.css?v=20260802">
-  <noscript><style>[data-aos]{opacity:1!important;transform:none!important}</style></noscript>
+  <link rel="stylesheet" href="./static/css/index.css?v=20260822">
+  <link rel="stylesheet" href="./static/css/figures.css?v=20260822">
+  <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 
+<!-- Icon sprite: Lucide (ISC) + simple-icons (CC0). Referenced via <use>. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-pdf" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></g></symbol>
+    <symbol id="i-arxiv" viewBox="0 0 24 24"><path fill="currentColor" d="M3.8423 0a1.0037 1.0037 0 0 0-.922.6078c-.1536.3687-.0438.6275.2938 1.1113l6.9185 8.3597-1.0223 1.1058a1.0393 1.0393 0 0 0 .003 1.4229l1.2292 1.3135-5.4391 6.4444c-.2803.299-.4538.823-.2971 1.1986a1.0253 1.0253 0 0 0 .9585.635.9133.9133 0 0 0 .6891-.3405l5.783-6.126 7.4902 8.0051a.8527.8527 0 0 0 .6835.2597.9575.9575 0 0 0 .8777-.6138c.1577-.377-.017-.7502-.306-1.1407l-7.0518-8.3418 1.0632-1.13a.9626.9626 0 0 0 .0089-1.3165L4.6336.4639s-.3733-.4535-.768-.463zm14.341 1.5701a.877.877 0 0 0-.6554.2418l-5.6962 6.1584 1.6944 1.8319 5.3089-6.5138c.3251-.4335.479-.6603.3247-1.0292a1.1205 1.1205 0 0 0-.9763-.689zm-7.6557 12.2823 1.3186 1.4135-5.7864 6.1295a.6494.6494 0 0 1-.4959.26.7516.7516 0 0 1-.706-.4669c-.1119-.2682.0359-.6864.2442-.9083l.0051-.0055.0047-.0055z"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></g></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></g></symbol>
+    <symbol id="i-tags" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></g></symbol>
+    <symbol id="i-list-checks" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></g></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m5 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M14 12h4"/><path d="M3 12h4"/><path d="M12 4v16"/><path d="M4 20h16"/></g></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77A4 4 0 0 1 19.973 16.483 4 4 0 1 1 12 18Z"/><path d="M15 13a4.092 4.092 0 0 1-3 4"/><path d="M9 12a4.092 4.092 0 0 0 3 4"/></g></symbol>
+    <symbol id="i-gavel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 12.5-8 8a2.119 2.119 0 1 1-3-3l8-8"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></g></symbol>
+    <symbol id="i-drama" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11h.01"/><path d="M14 6h.01"/><path d="M18 6h.01"/><path d="M6.5 13.1h.01"/><path d="M22 5c0 9-4 12-6 12s-6-3-6-12c0-2 2-3 6-3s6 1 6 3"/><path d="M17.4 9.9c-.8.8-2 .8-2.8 0"/><path d="M10.1 7.1C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7"/><path d="M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4"/></g></symbol>
+    <symbol id="i-comment-more" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></g></symbol>
+    <symbol id="i-box-open" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9"/><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"/><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></g></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></g></symbol>
+  </defs>
+</svg>
+
 <a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="navbar is-fixed-top paper-nav" role="navigation" aria-label="main navigation">
+<nav class="paper-nav" role="navigation" aria-label="main navigation">
   <div class="paper-shell nav-shell">
     <div class="navbar-brand">
-      <a class="navbar-item paper-brand" href="#top" aria-label="Capability Provenance home">
+      <a class="paper-brand" href="#top" aria-label="Capability Provenance home">
         <img src="./static/images/favicon.svg" alt="" width="28" height="28">
         <span>Capability Provenance</span>
       </a>
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Toggle dark mode">
+          <svg class="icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+          <svg class="icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+        <button role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-end">
         <a class="navbar-item" href="#abstract">Abstract</a>
         <a class="navbar-item" href="#method">Method</a>
         <a class="navbar-item" href="#findings">Findings</a>
+        <a class="navbar-item" href="#data">Data</a>
         <a class="navbar-item" href="#capabilities">Capabilities</a>
         <a class="navbar-item" href="#models">Models</a>
         <a class="navbar-item" href="#resources">Resources</a>
@@ -106,42 +144,63 @@
       </div>
     </div>
   </div>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress-bar" id="scroll-progress"></div></div>
 </nav>
 
 <header id="top" class="paper-hero">
-  <div class="paper-shell hero-copy" data-aos="fade-up">
-    <p class="publication-venue">Accepted at COLM 2026 Main Conference, SciFM Workshop, and Social Sim Workshop</p>
+  <div class="paper-shell hero-copy" data-reveal>
+    <p class="publication-venue">Accepted at COLM 2026</p>
+    <p class="venue-subline">Main Conference &middot; SciFM Workshop &middot; Social Sim Workshop</p>
     <h1 class="publication-title">Capability Provenance in Language Models</h1>
     <p class="publication-subtitle">A Case Study in Social Reasoning</p>
 
     <div class="publication-authors" aria-label="Authors">
-      <span class="author-block"><a href="mailto:glenn@gatech.edu">Glenn Matlin</a><span class="aff-marker" aria-hidden="true">🐝🔥🛡️</span></span>
-      <span class="author-block">Chandreyi Chakraborty<span class="aff-marker" aria-hidden="true">🐝</span></span>
-      <span class="author-block">Saehee Eom<span class="aff-marker" aria-hidden="true">🐝</span></span>
-      <span class="author-block">Mika Okamoto<span class="aff-marker" aria-hidden="true">🐝</span></span>
-      <span class="author-block">Rayan Castilla<span class="aff-marker" aria-hidden="true">🐝</span></span>
-      <span class="author-block">Louis Jaburi<span class="aff-marker" aria-hidden="true">🕊️</span></span>
-      <span class="author-block">Alvin Deng<span class="aff-marker" aria-hidden="true">🕊️</span></span>
-      <span class="author-block">Taywon Min<span class="aff-marker" aria-hidden="true">🤖🔥</span></span>
-      <span class="author-block">Lucia Quirke<span class="aff-marker" aria-hidden="true">🕊️</span></span>
-      <span class="author-block">Stella Biderman<span class="aff-marker" aria-hidden="true">🕊️</span></span>
-      <span class="author-block">Mark Riedl<span class="aff-marker" aria-hidden="true">🐝</span></span>
+      <span class="author-block"><a href="mailto:glenn@gatech.edu">Glenn Matlin</a><sup class="aff-sup">1,2,3</sup></span>
+      <span class="author-block">Chandreyi Chakraborty<sup class="aff-sup">1</sup></span>
+      <span class="author-block">Saehee Eom<sup class="aff-sup">1</sup></span>
+      <span class="author-block">Mika Okamoto<sup class="aff-sup">1</sup></span>
+      <span class="author-block">Rayan Castilla<sup class="aff-sup">1</sup></span>
+      <span class="author-block">Louis Jaburi<sup class="aff-sup">4</sup></span>
+      <span class="author-block">Alvin Deng<sup class="aff-sup">4</sup></span>
+      <span class="author-block">Taywon Min<sup class="aff-sup">5,2</sup></span>
+      <span class="author-block">Lucia Quirke<sup class="aff-sup">4</sup></span>
+      <span class="author-block">Stella Biderman<sup class="aff-sup">4</sup></span>
+      <span class="author-block">Mark Riedl<sup class="aff-sup">1</sup></span>
     </div>
     <p class="publication-affiliations">
-      <span aria-hidden="true">🐝</span> Georgia Tech  <span aria-hidden="true">🔥</span> MATS  <span aria-hidden="true">🕊️</span> EleutherAI  <span aria-hidden="true">🤖</span> KAIST AI  <span aria-hidden="true">🛡️</span> GT AI Safety Initiative
+      <span class="aff-item"><b class="aff-num">1</b> Georgia Tech</span>
+      <span class="aff-item"><b class="aff-num">2</b> MATS</span>
+      <span class="aff-item"><b class="aff-num">3</b> GT AI Safety Initiative</span>
+      <span class="aff-item"><b class="aff-num">4</b> EleutherAI</span>
+      <span class="aff-item"><b class="aff-num">5</b> KAIST AI</span>
     </p>
 
     <div class="publication-links" aria-label="Paper links">
       <a href="https://arxiv.org/pdf/2606.19625" target="_blank" rel="noopener" class="paper-link">
-        <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+        <svg aria-hidden="true"><use href="#i-pdf"/></svg><span>Paper</span>
       </a>
       <a href="https://arxiv.org/abs/2606.19625" target="_blank" rel="noopener" class="paper-link">
-        <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+        <svg aria-hidden="true"><use href="#i-arxiv"/></svg><span>arXiv</span>
       </a>
       <a href="https://github.com/eilab-gt/capabilibara" target="_blank" rel="noopener" class="paper-link">
-        <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+        <svg aria-hidden="true"><use href="#i-github"/></svg><span>Code</span>
       </a>
     </div>
+
+    <figure class="hero-teaser">
+      <img class="hero-mascot-peek" src="./static/images/capabilibara.svg" width="56" height="56" alt="" aria-hidden="true">
+      <a href="https://arxiv.org/pdf/2606.19625" target="_blank" rel="noopener" class="hero-teaser-frame" aria-label="Open the paper (Figure 1)">
+        <picture>
+          <source srcset="./static/images/hero-overview.webp" type="image/webp">
+          <img src="./static/images/hero-overview.png" width="2400" height="865" loading="eager" decoding="async"
+               alt="Figure 1: the capability provenance pipeline in four panels — sample Dolma3 into 576 WebOrganizer topic-format bins, score gradient-based attribution against four benchmark probes, aggregate to a signed bin-level influence map, and validate flagged regions with targeted unlearning.">
+        </picture>
+      </a>
+      <figcaption class="hero-teaser-caption">
+        The pipeline at a glance: corpus regions, not documents, carry skills.
+        Step through it interactively in <a href="#method">Method</a>.
+      </figcaption>
+    </figure>
   </div>
 
 </header>
@@ -165,11 +224,11 @@
 
   <section id="abstract" class="paper-section">
     <div class="paper-shell section-grid">
-      <div class="section-heading" data-aos="fade-up">
+      <div class="section-heading" data-reveal>
         <p class="section-kicker">Abstract</p>
         <h2>Training data as a capability map.</h2>
       </div>
-      <div class="paper-copy" data-aos="fade-up" data-aos-delay="100">
+      <div class="paper-copy" data-reveal data-reveal-delay="100">
         <p>
           How does a language model learn to interpret people's beliefs, emotions, intentions,
           and everyday moral choices? We trace that ability back to the training text that
@@ -186,7 +245,7 @@
 
   <section id="method" class="paper-section concept-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
+      <div class="section-heading centered" data-reveal>
         <p class="section-kicker">Method</p>
         <h2>From documents to interpretable corpus regions.</h2>
         <p>
@@ -195,7 +254,7 @@
         </p>
       </div>
 
-      <div class="method-walkthrough" data-aos="fade-up">
+      <div class="method-walkthrough" data-reveal>
         <div class="fig1" data-fig1>
           <figure class="image fig1-fallback">
             <svg class="fig1-schematic" viewBox="0 0 880 200" role="img" aria-label="Four-stage capability provenance pipeline: build a labeled corpus, score influence per region, read the influence map, and check it causally with unlearning.">
@@ -232,7 +291,7 @@
       </div>
 
       <div class="concept-row influence-row" id="influence">
-        <div class="concept-copy" data-aos="fade-up">
+        <div class="concept-copy" data-reveal>
           <p class="mini-kicker">The core tool</p>
           <h3>What is an influence function?</h3>
           <p>
@@ -247,7 +306,7 @@
             supported the skill. Documents whose nudge points the opposite way score negative.
           </p>
         </div>
-        <div class="influence-viz" data-concept="influence" data-aos="fade-up" data-aos-delay="120">
+        <div class="influence-viz" data-concept="influence" data-reveal data-reveal-delay="120">
           <svg class="infl-static" viewBox="0 0 460 292" role="img" aria-label="The benchmark question defines a direction, drawn as an arrow pointing right. A training document whose nudge points the same way has positive influence. A document whose nudge points the opposite way has negative influence.">
             <g class="infl-panel">
               <text x="230" y="26" class="infl-title">The question's direction</text>
@@ -282,7 +341,7 @@
       
 
       <div class="concept-row contrast-row taxonomy-row">
-        <div class="taxonomy-viz" data-concept="taxonomy" data-aos="fade-up" data-aos-delay="120">
+        <div class="taxonomy-viz" data-concept="taxonomy" data-reveal data-reveal-delay="120">
           <div class="tax-axis tax-axis-y">24 topics</div>
           <div class="tax-grid-wrap">
             <div class="tax-axis tax-axis-x">24 formats</div>
@@ -298,7 +357,7 @@
             <span><b class="tax-num">6</b>Education &amp; Jobs &times; FAQ</span>
           </div>
         </div>
-        <div class="concept-copy" data-aos="fade-up">
+        <div class="concept-copy" data-reveal>
           <p class="mini-kicker">Corpus taxonomy</p>
           <h3>24 topics crossed with 24 formats.</h3>
           <p>
@@ -312,7 +371,7 @@
       </div>
 
       <div class="concept-row">
-        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+        <div class="concept-copy" data-reveal data-reveal-delay="120">
           <p class="mini-kicker">Contrastive design</p>
           <h3>Domain and capability type are separated.</h3>
           <p>
@@ -321,7 +380,7 @@
             domain.
           </p>
         </div>
-        <div class="contrast-viz" data-concept="contrast" data-aos="fade-up">
+        <div class="contrast-viz" data-concept="contrast" data-reveal>
           <div class="contrast-grid">
             <div class="contrast-axis"></div>
             <div class="contrast-axis">Social</div>
@@ -352,7 +411,7 @@
 
   <section id="findings" class="paper-section findings-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
+      <div class="section-heading centered" data-reveal>
         <p class="section-kicker">Findings</p>
         <h2>Different capabilities, different data distributions.</h2>
         <p>
@@ -362,7 +421,7 @@
       </div>
 
       <div class="concept-row">
-        <div class="concept-copy" data-aos="fade-up">
+        <div class="concept-copy" data-reveal>
           <p class="mini-kicker">The signature in OLMo3</p>
           <h3>Two flavors of text carry social reasoning.</h3>
           <p>
@@ -379,7 +438,7 @@
             the distribution, not any single corpus slice.
           </p>
         </div>
-        <figure class="finding-figure" data-aos="fade-up" data-aos-delay="120">
+        <figure class="finding-figure" data-reveal data-reveal-delay="120">
           <div class="cluster-viz" data-concept="clusters">
             <div class="cluster cloud-dialogue">
               <span>Q&amp;A</span><span>advice</span><span>feelings</span><span>reply</span><span>intent</span>
@@ -396,7 +455,7 @@
 
 
       <div class="concept-row contrast-row">
-        <figure class="finding-figure" data-aos="fade-up">
+        <figure class="finding-figure" data-reveal>
         <svg class="split-fig" viewBox="0 0 640 250" role="img" aria-label="Two diverging bars around a shared zero line compare the social versus STEM contrast. The reasoning pair spans delta z up to 0.91 in each direction while the knowledge pair spans up to 0.63, leaning the same way in both.">
           <text x="180" y="28" class="sf-axis" text-anchor="middle">leans STEM</text>
           <text x="460" y="28" class="sf-axis" text-anchor="middle">leans social</text>
@@ -418,7 +477,7 @@
           <text x="320" y="234" class="sf-note" text-anchor="middle">same direction in both pairs, about 1.4 times the spread for reasoning</text>
         </svg>
       </figure>
-        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+        <div class="concept-copy" data-reveal data-reveal-delay="120">
           <p class="mini-kicker">Reasoning versus knowledge</p>
           <h3>The split is sharper for reasoning.</h3>
           <p>
@@ -437,7 +496,7 @@
       </div>
 
       <div class="concept-row">
-        <div class="concept-copy" data-aos="fade-up" data-aos-delay="120">
+        <div class="concept-copy" data-reveal data-reveal-delay="120">
           <p class="mini-kicker">The causal check</p>
           <h3>Forget the flagged text and the skill fades.</h3>
           <p>
@@ -454,7 +513,7 @@
             benchmark-specific selectivity is what repeats.
           </p>
         </div>
-        <figure class="finding-figure" data-aos="fade-up">
+        <figure class="finding-figure" data-reveal>
           <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart of extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA, by topic. Literature 17.53, Education and Jobs 15.03, Sports and Fitness 8.40, Fashion and Beauty 6.93, Home and Hobbies 6.87 percentage points.">
             <text x="178" y="29" class="uf-label" text-anchor="end">Literature</text>
             <rect x="190" y="12" width="370" height="26" rx="3" class="uf-bar"></rect>
@@ -480,34 +539,34 @@
 
   <section id="data" class="paper-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
+      <div class="section-heading centered" data-reveal>
         <p class="section-kicker">Data</p>
         <h2>Fully open.</h2>
         <p>The study is possible because the OLMo ecosystem opens every layer of the stack.</p>
       </div>
-      <div class="open-stack" data-aos="fade-up" data-aos-delay="100">
+      <div class="open-stack" data-reveal data-reveal-delay="100">
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-microchip"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-cpu"/></svg></span>
           <strong>OLMo 3</strong>
           <small>The open-weights model whose skills we trace.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-database"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-database"/></svg></span>
           <strong>Dolma 3</strong>
           <small>The data OLMo 3 was trained on, with every document open for analysis.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-tags"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-tags"/></svg></span>
           <strong>WebOrganizer</strong>
           <small>A labeling system that sorts datasets like Dolma into categories by topic and format.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-list-check"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-list-checks"/></svg></span>
           <strong>OLMo 3 evaluation suite</strong>
           <small>Supplies the benchmarks that measure model abilities.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-scale-balanced"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-scale"/></svg></span>
           <strong>OLMES</strong>
           <small>A shared standard for scoring those benchmarks.</small>
         </div>
@@ -518,7 +577,7 @@
 
   <section id="capabilities" class="paper-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
+      <div class="section-heading centered" data-reveal>
         <p class="section-kicker">Expansion</p>
         <h2>Beyond one social skill.</h2>
         <p>
@@ -527,24 +586,24 @@
           social space.
         </p>
       </div>
-      <div class="open-stack" data-aos="fade-up" data-aos-delay="100">
+      <div class="open-stack" data-reveal data-reveal-delay="100">
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-brain"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-brain"/></svg></span>
           <strong>Theory of mind</strong>
           <small>Reasoning about what other people know, want, and believe.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-gavel"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-gavel"/></svg></span>
           <strong>Moral judgment</strong>
           <small>Everyday moral and normative choices.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-scale-unbalanced"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-drama"/></svg></span>
           <strong>Social bias</strong>
           <small>Stereotypes and biased framing in social situations.</small>
         </div>
         <div class="open-card">
-          <span class="open-icon"><i class="fas fa-comment-dots"></i></span>
+          <span class="open-icon"><svg aria-hidden="true"><use href="#i-comment-more"/></svg></span>
           <strong>Pragmatics</strong>
           <small>Reading implied meaning beyond the literal words.</small>
         </div>
@@ -554,8 +613,8 @@
 
   <section id="models" class="paper-section models-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
-        <p class="section-kicker">Expansion</p>
+      <div class="section-heading centered" data-reveal>
+        <p class="section-kicker">Generalization</p>
         <h2>Beyond one model.</h2>
       </div>
       <div class="models-wrap">
@@ -564,7 +623,7 @@
           different corpora, different token budgets, same question. Which specific regions carry a skill can shift with the corpus. The
           separation between capability distributions is the pattern we test for.
         </p>
-        <div class="models-table-wrap" data-aos="fade-up">
+        <div class="models-table-wrap" data-reveal>
           <table class="models-table">
             <caption class="sr-only">Roster of open-data models in the study: the OLMo3 Base 7B primary study, in-progress runs for OLMo3 Instruct, Marin, DCLM, and Comma, and planned 32B-scale runs.</caption>
             <thead id="models-head">
@@ -628,17 +687,17 @@
 
   <section id="resources" class="paper-section resources-section">
     <div class="paper-shell section-grid">
-      <div class="section-heading" data-aos="fade-up">
+      <div class="section-heading" data-reveal>
         <p class="section-kicker">Resources</p>
         <h2>Open artifacts.</h2>
       </div>
-      <div class="resource-list" data-aos="fade-up" data-aos-delay="100">
+      <div class="resource-list" data-reveal data-reveal-delay="100">
         <a href="https://github.com/eilab-gt/capabilibara" target="_blank" rel="noopener">
-          <span class="resource-icon"><i class="fab fa-github"></i></span>
+          <span class="resource-icon"><svg aria-hidden="true"><use href="#i-github"/></svg></span>
           <span><strong>Project repository</strong><small>The full pipeline, from attribution through unlearning.</small></span>
         </a>
         <a href="https://huggingface.co/spaces/HCAI-Lab/capabilibara" target="_blank" rel="noopener">
-          <span class="resource-icon"><i class="fas fa-box-open"></i></span>
+          <span class="resource-icon"><svg aria-hidden="true"><use href="#i-box-open"/></svg></span>
           <span><strong>Data artifacts</strong><small>Influence matrices, sampling manifests, cross-probe statistics, unlearning checkpoints, and Hub artifacts.</small></span>
         </a>
       </div>
@@ -647,12 +706,17 @@
 
   <section id="BibTeX" class="paper-section citation-section">
     <div class="paper-shell">
-      <div class="section-heading centered" data-aos="fade-up">
+      <div class="section-heading centered" data-reveal>
         <p class="section-kicker">Citation</p>
         <h2>Cite the paper.</h2>
       </div>
-      <div class="bibtex-wrap" data-aos="fade-up">
-        <button class="bibtex-copy" data-copy-bibtex type="button" aria-pressed="false">Copy BibTeX</button>
+      <div class="bibtex-wrap" data-reveal>
+        <div class="bibtex-actions">
+          <button class="bibtex-copy" data-copy-bibtex type="button" aria-pressed="false">Copy BibTeX</button>
+          <a class="bibtex-copy bibtex-download" href="./static/capabilibara.bib" download>
+            <svg aria-hidden="true"><use href="#i-download"/></svg><span>.bib</span>
+          </a>
+        </div>
         <pre class="bibtex"><code id="bibtex-code">@inproceedings{matlin2026capabilityprovenance,
   title         = {Capability Provenance in Language Models: A Case Study in Social Reasoning},
   author        = {Glenn Matlin and Chandreyi Chakraborty and Saehee Eom and Mika Okamoto and
@@ -687,10 +751,9 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script type="module" src="./static/js/figure1.js?v=20260802"></script>
-  <script type="module" src="./static/js/influence-anim.js?v=20260802"></script>
-<script type="module" src="./static/js/main.js?v=20260729"></script>
+<script src="./static/js/vendor/gsap.min.js"></script>
+  <script type="module" src="./static/js/figure1.js?v=20260821"></script>
+  <script type="module" src="./static/js/influence-anim.js?v=20260821"></script>
+<script type="module" src="./static/js/main.js?v=20260821"></script>
 </body>
 </html>

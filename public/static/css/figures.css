@@ -20,7 +20,7 @@
   overflow: hidden;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .fig1-interactive {
@@ -42,7 +42,7 @@
   min-height: 34px;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--slate);
   padding: 0.3rem 0.72rem;
   font-size: 0.82rem;
@@ -115,8 +115,8 @@
   height: 2.25rem;
   border: 1px solid #dfd5e4;
   border-radius: 8px;
-  background: #fffdf8;
-  color: var(--primary-color);
+  background: var(--card-bg);
+  color: var(--primary-text);
   font-size: 0.95rem;
   cursor: pointer;
   transition: background 180ms ease, transform 180ms ease;
@@ -124,7 +124,7 @@
 
 .fig1-btn:hover,
 .fig1-btn:focus {
-  background: #f1e9f4;
+  background: var(--icon-tint);
   transform: translateY(-1px);
 }
 
@@ -201,7 +201,7 @@
 }
 
 .fig1-schematic .f1s-box rect {
-  fill: #fffdf8;
+  fill: var(--card-bg);
   stroke: var(--hairline);
   stroke-width: 1.4;
 }
@@ -248,7 +248,7 @@
   padding: 1rem;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .tax-axis {
@@ -281,7 +281,7 @@
 .tax-cell {
   min-width: 0;
   border-radius: 2px;
-  background: #e7e1d8;
+  background: var(--cell-idle);
   opacity: 0.3;
   transform: scale(0.62);
   transition: opacity 420ms ease, transform 420ms ease, background 420ms ease;
@@ -340,7 +340,7 @@
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 750;
-  background: #fffdf8;
+  background: var(--card-bg);
 }
 
 .tax-note {
@@ -356,7 +356,7 @@
   padding: 1rem;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .contrast-grid {
@@ -415,35 +415,35 @@
    published figures), softened to light tints with dark same-hue ink so
    the text stays readable. */
 .social-reason {
-  background: rgba(118, 42, 131, 0.15);
+  background: var(--tint-soc);
 }
 
 .social-reason strong {
-  color: #5e2470;
+  color: var(--ink-soc);
 }
 
 .social-know {
-  background: rgba(140, 109, 31, 0.15);
+  background: var(--tint-gold);
 }
 
 .social-know strong {
-  color: #6b5418;
+  color: var(--ink-gold);
 }
 
 .stem-reason {
-  background: rgba(161, 79, 0, 0.13);
+  background: var(--tint-stem);
 }
 
 .stem-reason strong {
-  color: #7a3c00;
+  color: var(--ink-stem);
 }
 
 .stem-know {
-  background: rgba(27, 120, 55, 0.14);
+  background: var(--tint-know);
 }
 
 .stem-know strong {
-  color: #145a2a;
+  color: var(--ink-know);
 }
 
 /* ================= Influence-function explainer ================= */
@@ -455,7 +455,7 @@
   padding: 1rem;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #fffdf8;
+  background: var(--card-bg);
 }
 
 .influence-viz svg {
@@ -465,7 +465,7 @@
 }
 
 .influence-viz .infl-doc {
-  fill: #ffffff;
+  fill: var(--card-bg);
   stroke: var(--hairline);
   stroke-width: 1.2;
 }
@@ -561,20 +561,17 @@
   padding: 1rem;
   border: 1px solid var(--hairline);
   border-radius: 8px;
-  background: #fffdf8;
-}
-
-.finding-figure .cluster-viz {
-  margin: 0;
-}
-
-.cluster-viz {
+  background: var(--card-bg);
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr);
   gap: 1rem;
   align-items: center;
   min-height: 240px;
   overflow: hidden;
+}
+
+.finding-figure .cluster-viz {
+  margin: 0;
 }
 
 .cluster .cluster-name {
@@ -722,10 +719,29 @@
 }
 
 
-/* Long p-value annotations drop to a second line under the number instead
-   of overflowing the card edge. */
-.bar-value small {
-  display: block;
-  font-weight: 600;
-  white-space: normal;
+
+/* ================= Dark-theme figure palette ================= */
+/* figures.css loads after index.css, so these declarations own the
+   figure-specific variables in dark mode. Hues stay in the paper's family,
+   lightened for dark surfaces. */
+[data-theme="dark"] {
+  --soc-reason: #a565b8;
+  --soc-know: #c9a04e;
+  --stem-reason: #cf7f3a;
+  --stem-know: #58a06e;
+  --infl-pos: #7fb3dd;
+  --infl-neg: #e8926f;
+  --slate: #b6b1bd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --soc-reason: #a565b8;
+    --soc-know: #c9a04e;
+    --stem-reason: #cf7f3a;
+    --stem-know: #58a06e;
+    --infl-pos: #7fb3dd;
+    --infl-neg: #e8926f;
+    --slate: #b6b1bd;
+  }
 }

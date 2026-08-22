@@ -1,4 +1,5 @@
-/* Site interactions: navigation, scroll reveals, taxonomy grid, and compact figure animations. */
+/* Site interactions: theme, navigation, scroll reveals, taxonomy grid, scrollspy,
+   progress bar, and compact figure animations. */
 import { MODELS } from "./animations/socialtda-data.js";
 
 (function () {
@@ -12,10 +13,56 @@ import { MODELS } from "./animations/socialtda-data.js";
     else fn();
   }
 
+  /* ---------- Theme ---------- */
+  function applyTheme(dark) {
+    root.setAttribute("data-theme", dark ? "dark" : "light");
+    var toggle = document.getElementById("theme-toggle");
+    if (toggle) {
+      toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    }
+  }
+
+  function initTheme() {
+    // The inline head script already set data-theme before paint; mirror it.
+    var media = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    if (!root.getAttribute("data-theme")) {
+      applyTheme(media && media.matches);
+    }
+
+    var toggle = document.getElementById("theme-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") !== "dark";
+        applyTheme(dark);
+        try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) {}
+      });
+    }
+
+    // Follow OS changes only while the user has not chosen explicitly.
+    if (media && media.addEventListener) {
+      media.addEventListener("change", function (e) {
+        var saved = null;
+        try { saved = localStorage.getItem("theme"); } catch (err) {}
+        if (!saved) applyTheme(e.matches);
+      });
+    }
+  }
+
+  /* ---------- Navbar ---------- */
   function setNavHeight() {
     var navbar = document.querySelector(".paper-nav");
     if (!navbar) return;
     root.style.setProperty("--nav-height", Math.round(navbar.getBoundingClientRect().height) + "px");
+  }
+
+  function closeMenu() {
+    document.querySelectorAll(".navbar-burger").forEach(function (burger) {
+      burger.classList.remove("is-active");
+      burger.setAttribute("aria-expanded", "false");
+    });
+    document.querySelectorAll(".navbar-menu").forEach(function (menu) {
+      menu.classList.remove("is-active");
+    });
   }
 
   function initNavbar() {
@@ -30,18 +77,32 @@ import { MODELS } from "./animations/socialtda-data.js";
     });
 
     document.querySelectorAll(".navbar-menu .navbar-item").forEach(function (item) {
-      item.addEventListener("click", function () {
-        document.querySelectorAll(".navbar-burger").forEach(function (burger) {
-          burger.classList.remove("is-active");
-          burger.setAttribute("aria-expanded", "false");
-        });
-        document.querySelectorAll(".navbar-menu").forEach(function (menu) {
-          menu.classList.remove("is-active");
-        });
-      });
+      item.addEventListener("click", closeMenu);
     });
   }
 
+  /* ---------- Scroll reveal ---------- */
+  function initReveal() {
+    var nodes = [].slice.call(document.querySelectorAll("[data-reveal]"));
+    nodes.forEach(function (el) {
+      var delay = parseInt(el.getAttribute("data-reveal-delay") || "0", 10);
+      if (delay) el.style.setProperty("--reveal-delay", delay + "ms");
+    });
+    if (!("IntersectionObserver" in window)) {
+      nodes.forEach(function (el) { el.classList.add("is-revealed"); });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-revealed");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    nodes.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* ---------- Taxonomy grid ---------- */
   function initTaxonomyGrid() {
     var grid = document.querySelector("[data-tax-grid]");
     if (!grid || grid.childElementCount) return;
@@ -68,6 +129,7 @@ import { MODELS } from "./animations/socialtda-data.js";
     }
   }
 
+  /* ---------- Section-level scroll reveals for figures ---------- */
   function initScrollAnimations() {
     var nodes = [].slice.call(document.querySelectorAll(
       ".taxonomy-viz, .contrast-viz, .cluster-viz, .influence-viz"
@@ -89,6 +151,61 @@ import { MODELS } from "./animations/socialtda-data.js";
     }, { threshold: 0.25, rootMargin: "0px 0px -8% 0px" });
 
     nodes.forEach(function (node) { observer.observe(node); });
+  }
+
+  /* ---------- Scrollspy: highlight the nav item for the section in view ---------- */
+  function initScrollSpy() {
+    var links = [].slice.call(document.querySelectorAll(".navbar-menu .navbar-item[href^='#']"));
+    if (!links.length || !("IntersectionObserver" in window)) return;
+
+    var byId = {};
+    links.forEach(function (link) {
+      var id = link.getAttribute("href").slice(1);
+      var section = document.getElementById(id);
+      if (section) byId[id] = link;
+    });
+
+    function setActive(id) {
+      links.forEach(function (link) {
+        var on = link.getAttribute("href") === "#" + id;
+        link.classList.toggle("is-active", on);
+        if (on) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+    }
+
+    var currentId = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) currentId = entry.target.id;
+      });
+      if (currentId) setActive(currentId);
+    }, { rootMargin: "-40% 0px -55% 0px", threshold: 0 });
+
+    Object.keys(byId).forEach(function (id) { spy.observe(document.getElementById(id)); });
+
+    window.addEventListener("hashchange", function () {
+      var id = location.hash.slice(1);
+      if (id && byId[id]) setActive(id);
+    });
+  }
+
+  /* ---------- Reading progress bar under the navbar ---------- */
+  function initProgressBar() {
+    var bar = document.getElementById("scroll-progress");
+    if (!bar) return;
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - window.innerHeight;
+      var frac = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      bar.style.transform = "scaleX(" + frac + ")";
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
   }
 
   /* Render the model roster table from MODELS. Rows = models; columns are
@@ -149,26 +266,34 @@ import { MODELS } from "./animations/socialtda-data.js";
     });
   }
 
+  /* ---------- Models table scroll affordance ---------- */
+  function initTableFade() {
+    var wrap = document.querySelector(".models-table-wrap");
+    if (!wrap) return;
+    function update() {
+      var max = wrap.scrollWidth - wrap.clientWidth;
+      var overflow = max > 4;
+      wrap.classList.toggle("is-scrollable", overflow);
+      wrap.classList.toggle("is-at-end", overflow && wrap.scrollLeft >= max - 4);
+    }
+    wrap.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  }
+
   ready(function () {
     setNavHeight();
+    initTheme();
     initNavbar();
+    initReveal();
     initTaxonomyGrid();
     initScrollAnimations();
+    initScrollSpy();
+    initProgressBar();
     initModelsTable();
     initBibtexCopy();
+    initTableFade();
 
     window.addEventListener("resize", setNavHeight);
-
-    if (window.AOS) {
-      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.AOS.init({ once: true, duration: 650, easing: "ease-out-cubic", disable: reduce });
-    } else {
-      /* AOS failed to load (CDN blocked or offline): its stylesheet hides
-         [data-aos] elements, so strip the attributes to reveal everything. */
-      document.querySelectorAll("[data-aos]").forEach(function (el) {
-        el.removeAttribute("data-aos");
-        el.removeAttribute("data-aos-delay");
-      });
-    }
   });
 })();
