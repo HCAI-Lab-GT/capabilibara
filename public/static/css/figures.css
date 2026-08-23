@@ -230,13 +230,18 @@
 }
 
 /* Without JS the scroll-reveal cells would stay faded or invisible.
-   Force them to their final visible state so the page is readable. */
+   Force them to their final visible state so the page is readable.
+   Cluster pills keep their centered anchor transform. */
 .no-js .tax-cell,
 .no-js .contrast-cell,
-.no-js .cluster span,
 .no-js .influence-viz .infl-panel {
   opacity: 1;
   transform: none;
+}
+
+.no-js .cluster span {
+  opacity: 1;
+  transform: translate(-50%, -50%);
 }
 
 /* ================= Taxonomy animation ================= */
@@ -556,7 +561,10 @@
   font-weight: 700;
 }
 
-/* ================= Cluster animation ================= */
+/* ================= Cluster map ================= */
+/* Genre clusters rendered as miniature embedding maps: a faint dot field
+   per lobe (drawn by JS around the pill centers) under ranked callout
+   pills, with a soft hue halo grounding each lobe. */
 .cluster-viz {
   padding: 1rem;
   border: 1px solid var(--hairline);
@@ -565,8 +573,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2px minmax(0, 1fr);
   gap: 1rem;
-  align-items: center;
-  min-height: 240px;
+  align-items: stretch;
+  min-height: 264px;
   overflow: hidden;
 }
 
@@ -574,62 +582,151 @@
   margin: 0;
 }
 
-.cluster .cluster-name {
-  margin: 196px 0 0;
+.cluster {
+  position: relative;
+  min-height: 232px;
+  padding-top: 2rem;
+}
+
+/* Soft halo tying each lobe together. */
+.cluster::before {
+  content: "";
+  position: absolute;
+  inset: 8% 5% 10%;
+  background: radial-gradient(ellipse 62% 56% at 42% 54%, var(--tint-soc), transparent 72%);
+  pointer-events: none;
+}
+
+.cloud-docs::before {
+  background: radial-gradient(ellipse 62% 56% at 46% 54%, var(--tint-gold), transparent 72%);
+}
+
+.cluster-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--soc-reason);
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 700ms ease, transform 700ms ease;
+  pointer-events: none;
+}
+
+.cloud-docs .cluster-field {
+  color: var(--secondary-color);
+}
+
+.cluster-field circle {
+  fill: currentColor;
+}
+
+.cluster-viz.is-visible .cluster-field {
+  opacity: 1;
+  transform: none;
+}
+
+.cluster-name {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.35rem;
   color: var(--faint);
-  font-size: 0.76rem;
-  font-style: italic;
-  text-align: center;
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.cluster-name::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2.5px;
+  background: var(--soc-reason);
+}
+
+.cloud-docs .cluster-name::before {
+  background: var(--secondary-color);
 }
 
 .cluster-divider {
-  height: 82%;
-  background: var(--hairline);
+  align-self: center;
+  justify-self: center;
+  width: 1px;
+  height: 76%;
+  background: repeating-linear-gradient(180deg, var(--hairline) 0 3px, transparent 3px 9px);
 }
 
-.cluster {
-  position: relative;
-  min-height: 190px;
-}
-
+/* Callout pills sit centered on their blob centers. Coordinates are set
+   inline by JS from index.html data-x/y; the rules below mirror those
+   values as the no-JS fallback. */
 .cluster span {
   position: absolute;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
-  padding: 0.28rem 0.56rem;
+  padding: 0.34rem 0.62rem;
   border-radius: 8px;
+  background: var(--soc-reason);
   color: var(--on-accent, #ffffff);
   font-weight: 850;
+  white-space: nowrap;
+  box-shadow: 0 0 0 4px var(--card-bg), 0 3px 12px rgba(23, 23, 23, 0.22);
   opacity: 0;
-  transform: translateY(16px) scale(0.94);
+  transform: translate(-50%, -42%) scale(0.94);
   transition: opacity 520ms ease, transform 520ms ease;
 }
 
-.cluster-viz.is-visible .cluster span {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
+.cloud-dialogue span:nth-of-type(1) { left: 26%; top: 40%; }
+.cloud-dialogue span:nth-of-type(2) { left: 58%; top: 33%; }
+.cloud-dialogue span:nth-of-type(3) { left: 47%; top: 57%; }
+.cloud-dialogue span:nth-of-type(4) { left: 21%; top: 71%; }
+.cloud-dialogue span:nth-of-type(5) { left: 59%; top: 77%; }
 
-.cloud-dialogue span {
-  background: var(--soc-reason);
-}
+.cloud-docs span:nth-of-type(1) { left: 30%; top: 37%; }
+.cloud-docs span:nth-of-type(2) { left: 63%; top: 43%; }
+.cloud-docs span:nth-of-type(3) { left: 49%; top: 61%; }
+.cloud-docs span:nth-of-type(4) { left: 19%; top: 64%; }
+.cloud-docs span:nth-of-type(5) { left: 57%; top: 81%; }
 
 .cloud-docs span {
   background: var(--secondary-color);
 }
 
-.cloud-dialogue span:nth-child(1) { top: 12px; left: 8%; transition-delay: 80ms; }
-.cloud-dialogue span:nth-child(2) { top: 70px; left: 36%; transition-delay: 180ms; }
-.cloud-dialogue span:nth-child(3) { top: 122px; left: 18%; transition-delay: 280ms; }
-.cloud-dialogue span:nth-child(4) { top: 34px; left: 58%; transition-delay: 380ms; }
-.cloud-dialogue span:nth-child(5) { top: 146px; left: 55%; transition-delay: 480ms; }
+/* Rank hierarchy: bigger plate = higher-influence genre. */
+.cluster span[data-rank="1"] {
+  font-size: 1.04rem;
+  padding: 0.44rem 0.78rem;
+}
 
-.cloud-docs span:nth-child(1) { top: 16px; left: 20%; transition-delay: 120ms; }
-.cloud-docs span:nth-child(2) { top: 76px; left: 46%; transition-delay: 220ms; }
-.cloud-docs span:nth-child(3) { top: 130px; left: 12%; transition-delay: 320ms; }
-.cloud-docs span:nth-child(4) { top: 42px; left: 62%; transition-delay: 420ms; }
-.cloud-docs span:nth-child(5) { top: 154px; left: 48%; transition-delay: 520ms; }
+.cluster span[data-rank="2"] {
+  font-size: 0.95rem;
+}
+
+.cluster span[data-rank="3"] {
+  font-size: 0.88rem;
+}
+
+.cluster span[data-rank="4"],
+.cluster span[data-rank="5"] {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.cluster-viz.is-visible .cluster span {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.cluster span:nth-of-type(1) { transition-delay: 340ms; }
+.cluster span:nth-of-type(2) { transition-delay: 460ms; }
+.cluster span:nth-of-type(3) { transition-delay: 580ms; }
+.cluster span:nth-of-type(4) { transition-delay: 700ms; }
+.cluster span:nth-of-type(5) { transition-delay: 820ms; }
 
 @media screen and (max-width: 768px) {
   .fig1 {
@@ -693,12 +790,13 @@
   }
 
   .cluster-divider {
-    width: 100%;
+    width: 72%;
     height: 1px;
+    background: repeating-linear-gradient(90deg, var(--hairline) 0 3px, transparent 3px 9px);
   }
 
   .cluster {
-    min-height: 198px;
+    min-height: 212px;
   }
 }
 

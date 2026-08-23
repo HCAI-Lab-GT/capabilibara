@@ -129,6 +129,92 @@ import { MODELS } from "./animations/socialtda-data.js";
     }
   }
 
+  /* ---------- Cluster dot fields ---------- */
+  /* Genre clusters render as miniature embedding maps: a faint dot field
+     per lobe, denser around the pill centers. Geometry lives in index.html
+     (data-x/y per pill); this only paints dots and pins pills so HTML
+     stays the source of truth and the no-JS fallback stays coherent. */
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function drawClusterField(cluster, seed) {
+    var svg = cluster.querySelector(".cluster-field");
+    if (!svg) return;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var w = cluster.clientWidth || 320;
+    var h = cluster.clientHeight || 240;
+    var rng = mulberry32(seed);
+    var svgNS = "http://www.w3.org/2000/svg";
+    var modes = [].slice.call(cluster.querySelectorAll("span[data-rank]")).map(function (s) {
+      return {
+        x: (parseFloat(s.getAttribute("data-x")) / 100) * w,
+        y: (parseFloat(s.getAttribute("data-y")) / 100) * h
+      };
+    });
+
+    function dot(x, y, r, o) {
+      var c = document.createElementNS(svgNS, "circle");
+      c.setAttribute("cx", x.toFixed(1));
+      c.setAttribute("cy", y.toFixed(1));
+      c.setAttribute("r", r.toFixed(2));
+      c.setAttribute("opacity", o.toFixed(2));
+      svg.appendChild(c);
+    }
+
+    function gauss() {
+      return Math.sqrt(-2 * Math.log(rng() || 0.001)) * Math.cos(2 * Math.PI * rng());
+    }
+
+    var pad = 12;
+    var i;
+    var m;
+    // Dense cores tight around each mode center.
+    for (i = 0; i < modes.length; i += 1) {
+      m = modes[i];
+      for (var k = 0; k < 9; k += 1) {
+        dot(m.x + gauss() * w * 0.03, m.y + gauss() * h * 0.055, 2 + rng() * 1.2, 0.34 + rng() * 0.22);
+      }
+    }
+    // Lobe body: wider scatter that still gravitates to the modes.
+    for (i = 0; i < 64; i += 1) {
+      m = modes[i % modes.length];
+      dot(m.x + gauss() * w * 0.095, m.y + gauss() * h * 0.18, 1.1 + rng() * 1.5, 0.15 + rng() * 0.23);
+    }
+    // Background strays: the rest of the corpus, thin and faint.
+    for (i = 0; i < 20; i += 1) {
+      dot(pad + rng() * (w - pad * 2), pad + rng() * (h - pad * 2), 0.9 + rng(), 0.08 + rng() * 0.1);
+    }
+  }
+
+  function initClusterFields() {
+    var clusters = [].slice.call(document.querySelectorAll(".cluster"));
+    if (!clusters.length || !document.createElementNS) return;
+    clusters.forEach(function (cluster, idx) {
+      if (cluster.querySelector(".cluster-field")) return;
+      var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "cluster-field");
+      svg.setAttribute("aria-hidden", "true");
+      cluster.insertBefore(svg, cluster.firstChild);
+      drawClusterField(cluster, 11 + idx * 37);
+    });
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        clusters.forEach(function (cluster, idx) {
+          drawClusterField(cluster, 11 + idx * 37);
+        });
+      }, 160);
+    });
+  }
+
   /* ---------- Section-level scroll reveals for figures ---------- */
   function initScrollAnimations() {
     var nodes = [].slice.call(document.querySelectorAll(
@@ -287,6 +373,7 @@ import { MODELS } from "./animations/socialtda-data.js";
     initNavbar();
     initReveal();
     initTaxonomyGrid();
+    initClusterFields();
     initScrollAnimations();
     initScrollSpy();
     initProgressBar();
