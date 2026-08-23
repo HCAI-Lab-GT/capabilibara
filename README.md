@@ -37,7 +37,7 @@ The headline scale of the study (full analysis and figures in the paper and on t
 | | |
 |---|---|
 | **576** topic-format bins | **5.68M** documents in the working set |
-| **4** contrastive benchmarks | **+1.60 pp** SocialIQA unlearning damage (p ≈ 10⁻⁵) |
+| **4** contrastive benchmarks | **paired unlearning** validation (Wilcoxon p ≈ 10⁻⁵) |
 
 ## Repository structure
 

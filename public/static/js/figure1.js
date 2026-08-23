@@ -64,7 +64,9 @@ var INFLUENCE = {
 };
 
 // Scene 4 data — real paired unlearning result for SocialIQA (paper §4.3 /
-// Fig. 1): Δ = influence-targeted − random accuracy damage, in pp, per topic.
+// Fig. 1): extra accuracy damage, influence-targeted minus random, per topic.
+// Values scale bar lengths only; numeric pp labels are intentionally not
+// printed on the site (methodology-first copy policy).
 var UNLEARN = [
   { label: "Literature",       v: 17.53 },
   { label: "Education & Jobs", v: 15.03 },
@@ -401,15 +403,14 @@ function barScene(root) {
   var maxV = UNLEARN[0].v;
   var y0 = 92;
   txt(g, VB_W / 2, 30, "Unlearning check: SocialIQA", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
-  txt(g, VB_W / 2, 48, "Δ accuracy damage: influence-targeted minus random, in pp (OLMo3-7B)", { class: "f1-kicker", "text-anchor": "middle" });
+  txt(g, VB_W / 2, 48, "extra accuracy damage: influence-targeted minus random forgetting (OLMo3-7B)", { class: "f1-kicker", "text-anchor": "middle" });
 
   var bars = UNLEARN.map(function (row, i) {
     var y = y0 + i * pitch;
     txt(g, x0 - 14, y + h / 2 + 4, row.label, { class: "f1-label", "font-size": 12, "font-weight": 600, "text-anchor": "end" });
     var w = row.v / maxV * maxW;
     var rect = el("rect", { x: x0, y: y, width: 0, height: h, rx: 3, fill: mix("#eff3ff", "#2F6FA8", 0.8) }, g);
-    var label = txt(g, x0 + 10, y + h / 2 + 4, "", { class: "f1-cellval", "font-size": 11.5, fill: V("--ink", "#171717"), opacity: 0 });
-    return { rect: rect, label: label, w: w, v: row.v, y: y };
+    return { rect: rect, w: w, v: row.v, y: y };
   });
   // baseline drawn after the bars so it squares off their left edge
   el("line", { x1: x0, y1: y0 - 8, x2: x0, y2: y0 + UNLEARN.length * pitch - (pitch - h) + 8, stroke: V("--slate", "#4B5563"), "stroke-width": 1.2 }, g);
@@ -421,15 +422,6 @@ function barScene(root) {
     bars.forEach(function (b, i) {
       var at = 0.15 * i;
       tl.to(b.rect, { attr: { width: b.w }, duration: 0.6, ease: "power2.out" }, at);
-      var proxy = { n: 0 };
-      tl.to(b.label, { opacity: 1, duration: 0.2 }, at + 0.25);
-      tl.to(proxy, {
-        n: b.v, duration: 0.55,
-        onUpdate: function () {
-          b.label.textContent = fmt(proxy.n, true, 2) + " pp";
-          b.label.setAttribute("x", x0 + Math.max(proxy.n / b.v, 0.01) * b.w + 10);
-        }
-      }, at + 0.1);
     });
     return tl;
   };

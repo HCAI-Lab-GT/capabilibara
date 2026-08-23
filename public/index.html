@@ -504,8 +504,7 @@
             unlearn the high-influence regions and compare against unlearning randomly chosen
             documents from the same topics. In OLMo3, influence-targeted forgetting damages
             social reasoning far more than the random controls, while the effect on the other
-            benchmarks is weak or absent. The chart shows the extra
-            accuracy damage in percentage points for the topics where the gap is largest.
+            benchmarks is weak or absent. The chart ranks the topics where that gap is largest.
           </p>
           <p>
             The check validates corpus regions in aggregate, not individually causal documents.
@@ -514,22 +513,17 @@
           </p>
         </div>
         <figure class="finding-figure" data-reveal>
-          <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart of extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA, by topic. Literature 17.53, Education and Jobs 15.03, Sports and Fitness 8.40, Fashion and Beauty 6.93, Home and Hobbies 6.87 percentage points.">
+          <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart ranking topics by extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA: Literature largest, then Education and Jobs, Sports and Fitness, Fashion and Beauty, and Home and Hobbies.">
             <text x="178" y="29" class="uf-label" text-anchor="end">Literature</text>
             <rect x="190" y="12" width="370" height="26" rx="3" class="uf-bar"></rect>
-            <text x="570" y="29" class="uf-value">+17.53 pp</text>
             <text x="178" y="73" class="uf-label" text-anchor="end">Education &amp; Jobs</text>
             <rect x="190" y="56" width="317" height="26" rx="3" class="uf-bar"></rect>
-            <text x="517" y="73" class="uf-value">+15.03 pp</text>
             <text x="178" y="117" class="uf-label" text-anchor="end">Sports &amp; Fitness</text>
             <rect x="190" y="100" width="177" height="26" rx="3" class="uf-bar"></rect>
-            <text x="377" y="117" class="uf-value">+8.40 pp</text>
             <text x="178" y="161" class="uf-label" text-anchor="end">Fashion &amp; Beauty</text>
             <rect x="190" y="144" width="146" height="26" rx="3" class="uf-bar"></rect>
-            <text x="346" y="161" class="uf-value">+6.93 pp</text>
             <text x="178" y="205" class="uf-label" text-anchor="end">Home &amp; Hobbies</text>
             <rect x="190" y="188" width="145" height="26" rx="3" class="uf-bar"></rect>
-            <text x="345" y="205" class="uf-value">+6.87 pp</text>
             <line x1="190" y1="6" x2="190" y2="220" class="uf-baseline"></line>
           </svg>
         </figure>
