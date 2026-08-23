@@ -24,11 +24,13 @@ var GCX = GRID.x + GRID_W / 2;                          // grid center X
 var GCY = GRID.y + GRID_W / 2;                          // grid center Y
 
 // ---- palette ----
+// Benchmark hues resolve through the site tokens (lighter variants in dark
+// mode); data colors below stay fixed like the paper's figures.
 var C = {
-  socReason: "#762A83", socKnow: "#8C6D1F",
-  stemReason: "#A14F00", stemKnow: "#1B7837",
-  slate: "#4B5563", grid: "#c9b8cf", gridFill: "#efe6f2",
-  ink: "#171717", faint: "#8a8790", hairline: "#ded9ce"
+  socReason: V("--soc-reason", "#762A83"), socKnow: V("--soc-know", "#8C6D1F"),
+  stemReason: V("--stem-reason", "#A14F00"), stemKnow: V("--stem-know", "#1B7837"),
+  slate: V("--slate", "#4B5563"), grid: "#c9b8cf", gridFill: "#efe6f2",
+  ink: "#171717", faint: V("--faint", "#8a8790"), hairline: "#ded9ce"
 };
 
 // ---- the 2×2 benchmark design: domain (social/STEM) × capability ----
@@ -85,9 +87,17 @@ var CAPTIONS = [
 ];
 
 // ---- helpers ----
+// Theme-aware paint: values expressed as var() go through inline styles so
+// figures recolor live when the theme toggles. Colors that sit on painted
+// "paper" surfaces (white bins, chips, docs) stay literal in both themes.
+function V(name, fallback) { return "var(" + name + "," + (fallback || "") + ")"; }
 function el(tag, attrs, parent) {
   var e = document.createElementNS(NS, tag);
-  if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (attrs) for (var k in attrs) {
+    var v = attrs[k];
+    if (typeof v === "string" && v.slice(0, 4) === "var(") e.style.setProperty(k, v);
+    else e.setAttribute(k, v);
+  }
   if (parent) parent.appendChild(e);
   return e;
 }
@@ -118,7 +128,11 @@ function fmt(v, plus, decimals) {
 // Each returns a <g> with an _enter(gsap) -> timeline method.
 
 // soft multi-hue palette used to suggest distinct strata/bins
-var STRATA = ["#762A83", "#8C6D1F", "#A14F00", "#1B7837", "#2F6FA8", "#5589B9", "#87B7D5", "#4B5563"];
+// (token-backed where one exists, so the fan lightens with the theme)
+var STRATA = [
+  C.socReason, C.socKnow, C.stemReason, C.stemKnow,
+  V("--infl-pos", "#2F6FA8"), "#5589B9", "#87B7D5", C.slate
+];
 
 // a "document" page glyph: rounded page with a folded corner + text lines
 function docGlyph(parent, x, y, w, h) {
@@ -150,7 +164,7 @@ function sceneCorpus(root) {
   txt(g, docX + blockW / 2, docY - 24, "Dolma3 web corpus", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
   txt(g, docX + blockW / 2, docY - 8, "de-duplicated, ~1.26B unique documents", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
   var sampleLbl = txt(g, docX + blockW / 2, docY + blockW + 18, "stratified working set: 10,000 docs per bin, 5.68M docs",
-    { class: "f1-label", "font-size": 11, "text-anchor": "middle", fill: C.slate, opacity: 0 });
+    { class: "f1-label", "font-size": 11, "text-anchor": "middle", fill: V("--slate", "#4B5563"), opacity: 0 });
   var docs = [];
   for (var i = 0; i < docCols * docRows; i++) {
     var col = i % docCols, rrow = Math.floor(i / docCols);
@@ -263,7 +277,7 @@ function sceneAttribution(root) {
     var cx1 = sx + (binX - sx) * 0.45, cx2 = sx + (binX - sx) * 0.7;
     return el("path", {
       d: "M " + sx + " " + sy + " C " + cx1 + " " + sy + " " + cx2 + " " + binMid[i] + " " + binX + " " + binMid[i],
-      fill: "none", stroke: C.slate, "stroke-width": 1.2, "stroke-linecap": "round", opacity: 0
+      fill: "none", stroke: V("--slate", "#4B5563"), "stroke-width": 1.2, "stroke-linecap": "round", opacity: 0
     }, g);
   });
 
@@ -284,8 +298,8 @@ function sceneAttribution(root) {
   txt(box, boxX + boxW / 2, boxY + 46, "Bergson / TrackStar", { class: "f1-title", "font-size": 15, "text-anchor": "middle" });
   txt(box, boxX + boxW / 2, boxY + 68, "signed score per", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
   txt(box, boxX + boxW / 2, boxY + 83, "bin × benchmark", { class: "f1-label", "font-size": 11, "text-anchor": "middle" });
-  var gradNote = txt(g, boxX + boxW / 2, boxY + boxH + 22, "doc gradients: OLMo3-7B Base", { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle", opacity: 0 });
-  var gradNote2 = txt(g, boxX + boxW / 2, boxY + boxH + 36, "query gradients: OLMo3-7B Instruct", { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle", opacity: 0 });
+  var gradNote = txt(g, boxX + boxW / 2, boxY + boxH + 22, "doc gradients: OLMo3-7B Base", { class: "f1-label", "font-size": 10, fill: V("--faint", "#8a8790"), "text-anchor": "middle", opacity: 0 });
+  var gradNote2 = txt(g, boxX + boxW / 2, boxY + boxH + 36, "query gradients: OLMo3-7B Instruct", { class: "f1-label", "font-size": 10, fill: V("--faint", "#8a8790"), "text-anchor": "middle", opacity: 0 });
 
   // ---- right: the six tracked bins ----
   txt(g, binX + binW / 2, binY0 - 14, "six tracked bins of 576", { class: "f1-kicker", "text-anchor": "middle" });
@@ -294,7 +308,7 @@ function sceneAttribution(root) {
     var bg = el("g", { opacity: 0 }, g);
     el("rect", { x: binX, y: y, width: binW, height: binH, rx: 3, fill: "#ffffff", stroke: C.hairline, "stroke-width": 1.1 }, bg);
     txt(bg, binX + 12, y + binH / 2 + 3.5, b.id, { fill: C.ink, "font-size": 10.5, "font-weight": 700 });
-    txt(bg, binX + 36, y + binH / 2 + 3.5, b.short, { fill: C.slate, "font-size": 10.5 });
+    txt(bg, binX + 36, y + binH / 2 + 3.5, b.short, { fill: "#4B5563", "font-size": 10.5 });
     return { g: bg };
   });
 
@@ -351,7 +365,7 @@ function heatScene(root) {
     row.v.forEach(function (val, ci) {
       var x = x0 + ci * (cw + gap);
       var rect = el("rect", { x: x, y: y, width: cw, height: ch, rx: 4, fill: "#f4f4f4", opacity: 0 }, g);
-      if (row.sig === ci) { rect.setAttribute("stroke", C.socReason); rect.setAttribute("stroke-width", 0); }
+      if (row.sig === ci) { rect.style.setProperty("stroke", C.socReason); rect.setAttribute("stroke-width", 0); }
       var label = txt(g, x + cw / 2, y + ch / 2 + 4, "", { class: "f1-cellval", "text-anchor": "middle", opacity: 0 });
       cellObjs.push({
         rect: rect, label: label, val: val,
@@ -394,11 +408,11 @@ function barScene(root) {
     txt(g, x0 - 14, y + h / 2 + 4, row.label, { class: "f1-label", "font-size": 12, "font-weight": 600, "text-anchor": "end" });
     var w = row.v / maxV * maxW;
     var rect = el("rect", { x: x0, y: y, width: 0, height: h, rx: 3, fill: mix("#eff3ff", "#2F6FA8", 0.8) }, g);
-    var label = txt(g, x0 + 10, y + h / 2 + 4, "", { class: "f1-cellval", "font-size": 11.5, fill: C.ink, opacity: 0 });
+    var label = txt(g, x0 + 10, y + h / 2 + 4, "", { class: "f1-cellval", "font-size": 11.5, fill: V("--ink", "#171717"), opacity: 0 });
     return { rect: rect, label: label, w: w, v: row.v, y: y };
   });
   // baseline drawn after the bars so it squares off their left edge
-  el("line", { x1: x0, y1: y0 - 8, x2: x0, y2: y0 + UNLEARN.length * pitch - (pitch - h) + 8, stroke: C.slate, "stroke-width": 1.2 }, g);
+  el("line", { x1: x0, y1: y0 - 8, x2: x0, y2: y0 + UNLEARN.length * pitch - (pitch - h) + 8, stroke: V("--slate", "#4B5563"), "stroke-width": 1.2 }, g);
   txt(g, VB_W / 2, y0 + UNLEARN.length * pitch + 24, "top topics shown (paired Wilcoxon, BH-adjusted, p ≈ 10⁻⁵)",
     { class: "f1-label", "font-size": 10, fill: C.faint, "text-anchor": "middle" });
 

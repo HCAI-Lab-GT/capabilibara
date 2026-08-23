@@ -11,20 +11,33 @@
 var NS = "http://www.w3.org/2000/svg";
 var VB_W = 460, VB_H = 300;
 
+// Theme-aware paint: var() values go through inline styles so the figure
+// recolors live on theme toggle. GSAP can't interpolate var() strings, so
+// the two color tweens below resolve tokens to concrete hexes at build time.
+function V(name, fallback) { return "var(" + name + "," + (fallback || "") + ")"; }
+function resolved(name, fallback) {
+  var v = window.getComputedStyle ? getComputedStyle(document.documentElement).getPropertyValue(name).trim() : "";
+  return v || fallback;
+}
+
 var C = {
-  query: "#762A83",
-  pos: "#2F6FA8",
-  neg: "#B35806",
-  ink: "#171717",
-  faint: "#8a8790",
-  hairline: "#ded9ce"
+  query: V("--soc-reason", "#762A83"),
+  pos: V("--infl-pos", "#2F6FA8"),
+  neg: V("--infl-neg", "#B35806"),
+  ink: V("--ink", "#171717"),
+  faint: V("--faint", "#8a8790"),
+  hairline: V("--hairline", "#ded9ce")
 };
 
 var OX = 150, OY = 150; // origin: "the model"
 
 function el(tag, attrs, parent) {
   var e = document.createElementNS(NS, tag);
-  if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (attrs) for (var k in attrs) {
+    var v = attrs[k];
+    if (typeof v === "string" && v.slice(0, 4) === "var(") e.style.setProperty(k, v);
+    else e.setAttribute(k, v);
+  }
   if (parent) parent.appendChild(e);
   return e;
 }
@@ -162,7 +175,7 @@ function build(container) {
   tl.to(pv.head, { opacity: 1, duration: 0.2 }, 2.8)
     .to(pDrop, { opacity: 0.8, duration: 0.35 }, 3.1)
     .fromTo(pProj, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.inOut" }, 3.4);
-  tl.to([pv.line, pv.head], { stroke: C.pos, fill: C.pos, duration: 0.45 }, 3.4);
+  tl.to([pv.line, pv.head], { stroke: resolved("--infl-pos", "#2F6FA8"), fill: resolved("--infl-pos", "#2F6FA8"), duration: 0.45 }, 3.4);
   tl.to(pChip, { opacity: 1, duration: 0.4 }, 3.7);
 
   // beat 3
@@ -173,7 +186,7 @@ function build(container) {
   tl.to(nv.head, { opacity: 1, duration: 0.2 }, 5.6)
     .to(nDrop, { opacity: 0.8, duration: 0.35 }, 5.9)
     .fromTo(nProj, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.inOut" }, 6.2);
-  tl.to([nv.line, nv.head], { stroke: C.neg, fill: C.neg, duration: 0.45 }, 6.2);
+  tl.to([nv.line, nv.head], { stroke: resolved("--infl-neg", "#B35806"), fill: resolved("--infl-neg", "#B35806"), duration: 0.45 }, 6.2);
   tl.to(nChip, { opacity: 1, duration: 0.4 }, 6.5);
 
   // beat 4
