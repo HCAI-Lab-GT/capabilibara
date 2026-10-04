@@ -1,0 +1,29 @@
+diff --git a/bergson/config.py b/bergson/config.py
+index 473dea4..ceaa65d 100644
+--- a/bergson/config.py
++++ b/bergson/config.py
+@@ -128,6 +128,9 @@ class IndexConfig:
+     tokenizer: str = ""
+     """Name of the tokenizer to use. If not set the model tokenizer is used."""
+ 
++    tokenizer_revision: str | None = None
++    """Revision of the tokenizer."""
++
+     fsdp: bool = False
+     """Whether to use Fully Sharded Data Parallel (FSDP) for collecting gradients."""
+ 
+diff --git a/bergson/utils/worker_utils.py b/bergson/utils/worker_utils.py
+index 3ae4262..e0823bd 100644
+--- a/bergson/utils/worker_utils.py
++++ b/bergson/utils/worker_utils.py
+@@ -303,7 +303,9 @@ def setup_data_pipeline(cfg: IndexConfig) -> Dataset | IterableDataset:
+         cfg.data.dataset, cfg.data.split, cfg.data.subset, cfg.data.data_args
+     )
+ 
+-    tokenizer = AutoTokenizer.from_pretrained(cfg.tokenizer or cfg.model)
++    tokenizer = AutoTokenizer.from_pretrained(
++        cfg.tokenizer or cfg.model, revision=cfg.tokenizer_revision
++    )
+ 
+     default_model_max_len = getattr(tokenizer, "model_max_length", None)
+     if (

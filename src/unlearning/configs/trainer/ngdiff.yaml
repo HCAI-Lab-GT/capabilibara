@@ -1,0 +1,44 @@
+# NGDiff trainer hyperparameters
+max_steps: 5000
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4    # effective batch = 16; 1 optimizer step = 4 NGDiff steps
+learning_rate: 0.00001
+lr_scheduler_type: "constant"
+warmup_steps: 0
+weight_decay: 0.0
+adam_beta1: 0.9
+adam_beta2: 0.999
+adam_epsilon: 1e-8
+max_grad_norm: 1.0
+
+# NGDiff-specific
+auto_lr: true
+lr_delta: 1.0e-5
+
+# Wall-time graceful stop (minutes). Job runs for up to 16 hr = 960 min;
+# stop 30 min early to ensure checkpoint is saved cleanly.
+max_walltime_minutes: 930    # 16 hr job, stop at 15.5 hr
+
+# Logging / saving
+logging_steps: 50
+save_steps: 200
+save_total_limit: 1
+eval_steps: 1000
+report_to: ["wandb"]
+
+# Precision
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+# Length-normalized loss (per-doc mean then batch mean)
+length_normalized_loss: true
+
+# Segment-shuffled PPL stopping criterion
+ppl_shuffle_mode: "segments"     # "segments" (GRACE) or "chunks" (original NGDiff)
+ppl_n_factor: 10                 # segment_max_len = valid_tokens // n_factor
+
+# Retain-only cooldown (off by default)
+cooldown_enabled: false
+cooldown_every_k: 200
+cooldown_steps: 50

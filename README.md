@@ -8,11 +8,11 @@
     <a href="https://arxiv.org/abs/2606.19625"><img src="https://img.shields.io/badge/%F0%9F%93%84%20paper-arXiv%202606.19625-1f2328.svg" alt="Paper"></a>
     <a href="https://eilab.gatech.edu/capabilibara/"><img src="https://img.shields.io/badge/venue-COLM%202026-762a83.svg" alt="COLM 2026"></a>
     <a href="https://eilab.gatech.edu/capabilibara/"><img src="https://img.shields.io/badge/%F0%9F%8C%90%20website-project%20page-2f6fa8.svg" alt="Project page"></a>
-    <img src="https://img.shields.io/badge/code-pending%20release-8c6d1f.svg" alt="Code status: pending release">
+    <img src="https://img.shields.io/badge/code-source%20available-2f6fa8.svg" alt="Code source available">
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-a93428.svg" alt="License: AGPL-3.0"></a>
     <img src="https://img.shields.io/badge/python-3.12-2f6fa8.svg" alt="Python 3.12">
-    <img src="https://img.shields.io/github/last-commit/eilab-gt/capabilibara?label=last%20commit" alt="Last commit">
-    <img src="https://img.shields.io/github/stars/eilab-gt/capabilibara?style=social" alt="Stars">
+    <img src="https://img.shields.io/github/last-commit/HCAI-Lab-GT/capabilibara?label=last%20commit" alt="Last commit">
+    <img src="https://img.shields.io/github/stars/HCAI-Lab-GT/capabilibara?style=social" alt="Stars">
   </p>
 
   <p>
@@ -24,11 +24,12 @@
 
 ## Overview
 
-This repository will host the audited code for **"Capability Provenance in Language Models: A Case Study in Social Reasoning"** (COLM 2026). The pipeline runs gradient-based training-data attribution over a stratified sample of the Dolma3 corpus, aggregates document-level influence to corpus regions defined by the WebOrganizer 24×24 topic-by-format taxonomy, and validates the flagged regions with selective unlearning.
+This repository contains a curated source snapshot for **"Capability Provenance in Language Models: A Case Study in Social Reasoning"** (COLM 2026). The study runs gradient-based training-data attribution over a stratified sample of the Dolma3 corpus, aggregates document-level influence to corpus regions defined by the WebOrganizer 24×24 topic-by-format taxonomy, and validates the flagged regions with selective unlearning.
 
 The full results, figures, and method write-up live in the **[paper](https://arxiv.org/abs/2606.19625)** and on the **[project site](https://eilab.gatech.edu/capabilibara/)**. This repository is the software.
 
-> ⚠️ **Status.** The project website is live now. The audited code and aggregate artifacts (sampling manifests, the 576×4 bin-level influence matrix, unlearning checkpoints) arrive with the camera-ready release. Sections marked **pending** below are staged for that release and filled when the code ports in.
+The release includes source for the study's sampling, attribution, aggregation, and unlearning components and the four 576-bin aggregate result files. It excludes document-level influence scores, raw training text, and operational run outputs. The full production pipeline has not been rerun from this public snapshot.
+The [source snapshot record](SOURCE_SNAPSHOT.md) gives the source revision, checksums, and checks run before publication.
 
 ## Results at a glance
 
@@ -41,35 +42,27 @@ The headline scale of the study (full analysis and figures in the paper and on t
 
 ## Repository structure
 
-> Pending the code port. The intended layout mirrors the audited pipeline; final paths are confirmed at release.
-
 ```
 src/
-├── data_attribution/      # attribution, benchmark probes, aggregation, analysis
-│   ├── attribution/       # gradient-based TDA (TrackStar via Bergson)
-│   ├── evaluation/        # OLMES benchmark probes
-│   └── analysis/          # bin-level influence aggregation, cross-benchmark stats
-├── dolma/                 # corpus construction: dedup, WebOrganizer enrichment, stratified sampling
-└── unlearning/            # influence-targeted vs matched-random unlearning (LoRA, NGDiff)
+├── data_attribution/      # attribution, benchmark probes, scoring
+├── dolma/                 # corpus manifests, enrichment, sampling
+└── unlearning/            # unlearning data and trainer components
+scripts/analysis/          # aggregate result export and selected analyses
+artifacts/zscored_bin_scores/aggregated/  # four 576-row result files
 ```
 
-Each package maps to a pipeline stage: **corpus construction** (`dolma/`) → **benchmark probes** (`data_attribution/evaluation/`) → **attribution** (`data_attribution/attribution/`) → **aggregation** (`data_attribution/analysis/`) → **unlearning** (`unlearning/`).
+The code snapshot records the component implementations. Internal run orchestration and private artifact paths are outside this release.
 
 ## Quick start
 
-> ⚠️ **Pending.** The code arrives with the camera-ready release. The intended workflow:
-
 ```bash
-# clone, then install (Python 3.12, uv-managed, src/ layout)
-git clone https://github.com/eilab-gt/capabilibara.git
-cd social-data-attribution
-uv sync
-
-# reproduce a headline result (command confirmed at release)
-# uv run data-attribution run <recipe>   # pending
+git clone https://github.com/HCAI-Lab-GT/capabilibara.git
+cd capabilibara
+bash scripts/bootstrap_local_deps.sh
+uv sync --no-build-isolation
 ```
 
-The pipeline uses two vendored dependencies — **Bergson** (TrackStar attribution) and **ai2-olmes** (eval harness) — bootstrapped by a setup script. Exact install and reproduce commands are pinned here at release.
+This is the recorded dependency setup for Python 3.12, with pinned Bergson and OLMES revisions. It has not been tested from a fresh public clone, and the complete production workflow requires large upstream datasets, model weights, and compute. See [third-party notices](THIRD_PARTY_NOTICES.md) for the patch licenses.
 
 ## Method
 
@@ -87,19 +80,15 @@ The central move is aggregation: every benchmark query is traced back to many do
 | Attribution | gradient-based TDA via TrackStar (Bergson) |
 | Compute | ~37K H200-equivalent GPU-hours |
 
-Public Hugging Face buckets and the released aggregate artifacts are listed in the **[Roadmap](#roadmap)**. No private or cluster-specific paths are referenced.
+Public aggregate files and external artifacts are listed below.
 
-## Roadmap
+## Release artifacts
 
-- [x] Project website live ([eilab.gatech.edu/capabilibara](https://eilab.gatech.edu/capabilibara/))
-- [x] Paper on arXiv ([2606.19625](https://arxiv.org/abs/2606.19625))
-- [ ] Audited code port (Copybara)
-- [ ] Sampling manifests
-- [ ] 576×4 bin-level influence matrix (aggregate; no document-level scores)
-- [ ] Unlearning checkpoints (LoRA adapters)
-- [ ] Hugging Face Hub release (aggregate artifacts)
+- [Source and four 576-bin aggregate CSVs](artifacts/zscored_bin_scores/aggregated/) are included in this repository. Each CSV has one row per WebOrganizer topic-format bin for one benchmark.
+- The [5.68M-document working-sample manifest](https://huggingface.co/datasets/HCAI-Lab-GT/dolma3-6t-sample-10000-docs/blob/main/working_sample_manifest.parquet), [sample contract](https://huggingface.co/datasets/HCAI-Lab-GT/dolma3-6t-sample-10000-docs/blob/main/sample_contract.json), and [bin summary](https://huggingface.co/datasets/HCAI-Lab-GT/dolma3-6t-sample-10000-docs/blob/main/bin_summary.csv) are public metadata files in the existing dataset.
+- [ARC-Challenge NGDiff adapters](https://huggingface.co/buckets/HCAI-Lab-GT/unlearn-binlevel-arc-ngdiff-adapters) are in an existing public artifact bucket. Selected completed runs have an `adapter/` directory; the bucket also contains intermediate checkpoints.
 
-Released artifacts are **aggregate, bin-level by design** — document-level attribution scores are deliberately not released.
+This release does not include document-level attribution scores or raw training text. The linked upstream sample dataset is a separate public resource and includes corpus data in addition to the metadata files linked above.
 
 ## Limitations
 
@@ -107,7 +96,7 @@ Released artifacts are **aggregate, bin-level by design** — document-level att
 - The analysis runs on a 5.68M-document stratified working set drawn from the ~1.26B-document population; results do not characterize every document in the full corpus.
 - Unlearning shows a corpus region is load-bearing; it does not explain the mechanism by which those documents shape behavior.
 - The deep-dive is measured on one open-data ecosystem (OLMo3-7B / Dolma3). Generalization across model families is an open question.
-- Released artifacts are aggregate bin-level statistics by design — no document-level attribution scores.
+- The released influence results are aggregate bin-level statistics; document-level attribution scores are not published.
 
 ## Citation
 
@@ -131,6 +120,7 @@ If you use this software, please cite the paper. GitHub's **"Cite this repositor
 ## License
 
 - **Code** in this repository is licensed under [AGPL-3.0](LICENSE).
+- **Four aggregate CSVs** under `artifacts/zscored_bin_scores/aggregated/` are licensed under [CC BY 4.0](LICENSE-data.txt); see their [schema and attribution notes](artifacts/zscored_bin_scores/README.md).
 - **Website content** (`public/`) is licensed under [CC BY-SA 4.0](LICENSE-website.md).
 
 ## Acknowledgments

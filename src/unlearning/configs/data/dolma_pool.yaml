@@ -1,0 +1,17 @@
+# Dataset configuration. Set DOLMA_CACHE to the local 6T-filtered Arrow cache.
+max_length: 2048
+batch_size: 4
+num_workers: 0
+
+# Sampling limits
+max_forget_docs: 2000
+max_retain_docs: 9000            # backward compat fallback
+docs_per_retain_bin: 1000        # 1K per non-target topic = ~23K total
+min_tokens: 512                  # drop docs < 512 estimated tokens
+resample_interval: 200           # retain resampling every K optimizer steps (0 = off)
+
+seed: 42
+
+forget_manifest_path: null   # JSON manifest path; if set, overrides random sampling
+forget_texts_path: null      # parquet/CSV/JSONL with text column; bypasses corpus lookup
+train_texts_path: null       # parquet/CSV/JSONL with split,text columns; bypasses corpus lookup

@@ -1,0 +1,64 @@
+# Purpose-built INTERACTIONAL taxonomy of the 24 WebOrganizer FORMATS for the
+# RQ4 lexical analysis. Every format is assigned to exactly one group on an
+# explicit communicative-function axis (no catch-all "other"). This replaces
+# the earlier interpersonal/documentation/other split, whose "other" bucket
+# was too broad and absorbed most BBH high-influence bins.
+#
+# The six groups are ordered along an interactional -> expository gradient:
+#   dialogic     - genuine multi-party interaction / turn-taking
+#   personal     - first-person, experiential, expressive authorship
+#   expository    - impersonal informational / reference prose
+#   structured   - lists, tables, transactional / legal boilerplate-with-content
+#   news         - journalism / broadcast transcripts
+#   boilerplate  - organizational stubs, ads, truncated low-signal pages
+#
+# `interactional_axis` collapses the six groups into a principled binary used
+# ONLY for the within-benchmark bimodality contrast (e.g. SocialIQA). news and
+# boilerplate are deliberately excluded from that binary: they are neither
+# clearly interactional nor expository-reference, so forcing them either way
+# would be arbitrary.
+#
+# Benchmark-agnostic: applies unchanged to any benchmark / held-out probe.
+
+version: 2
+
+groups:
+  dialogic:
+    - customer_support
+    - q_a_forum
+    - comment_section
+    - faq
+  personal:
+    - about_pers
+    - personal_blog
+    - creative_writing
+    - user_review
+  expository:
+    - documentation
+    - knowledge_article
+    - academic_writing
+    - nonfiction_writing
+    - tutorial
+  structured:
+    - structured_data
+    - content_listing
+    - listicle
+    - product_page
+    - legal_notices
+  news:
+    - news_article
+    - news_org
+    - audio_transcript
+  boilerplate:
+    - about_org
+    - spam_ads
+    - truncated
+
+interactional_axis:
+  interactional:
+    - dialogic
+    - personal
+  expository:
+    - expository
+    - structured
+  # news, boilerplate intentionally excluded from the binary contrast.

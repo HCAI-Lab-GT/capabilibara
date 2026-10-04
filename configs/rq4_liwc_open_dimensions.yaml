@@ -1,0 +1,132 @@
+version: 1
+# Master registry of the open LIWC-22 dimension space.
+#
+# Each dimension declares the route by which it is reproduced openly and the
+# output column that realizes it. This is the auditable parity claim: nothing
+# is silently skipped. Routes:
+#   A  Empath category union (counts; see rq4_liwc_empath_crosswalk.yaml)
+#   B  open closed-class in-repo lexicon (counts; see lexicons/rq4_*.json)
+#   C  open summary-variable formula (derived from densities; liwc_summary.py)
+#   D  punctuation regex count
+#   E  text statistic (derived ratio)
+#   F  light grammar heuristic (count; morphology/auxiliary-based, not a POS tagger)
+#   G  declared non-parity (no defensible open reproduction; reason given)
+#
+# 'output' names a count column from compute_doc_row (routes A,B,D,F),
+# a derived per-bin column (routes C,E), or is null (route G).
+# Validated statically only (no LIWC license); see appendix scope note.
+
+dimensions:
+  # --- Summary variables (route C) ---
+  - {id: analytic_open,   family: summary, route: C, output: analytic_open,   citation: "Pennebaker, Chung, Frazee, Lavergne & Beaver 2014, PLoS ONE 9(12):e115844"}
+  - {id: clout_approx,    family: summary, route: C, output: clout_approx,    citation: "Kacewicz, Pennebaker, Davis, Jeon & Graesser 2014, J. Lang. Soc. Psychol. 33(2)"}
+  - {id: authentic_approx,family: summary, route: C, output: authentic_approx,citation: "Newman, Pennebaker, Berry & Richards 2003, Pers. Soc. Psychol. Bull. 29(5)"}
+  - {id: tone_open,       family: summary, route: C, output: tone_open,       citation: "Pennebaker 2015 (LIWC operator manual); pos-minus-neg emotional tone"}
+
+  # --- Linguistic / function words (routes B, E, F) ---
+  - {id: wc,            family: linguistic, route: E, output: total_words,        citation: "word count (tokens)"}
+  - {id: wps,           family: linguistic, route: E, output: wps,                citation: "words per sentence"}
+  - {id: bigwords,      family: linguistic, route: E, output: bigwords_pct,       citation: "% words > 6 characters"}
+  - {id: dic,           family: linguistic, route: E, output: dic_pct,            citation: "% tokens in the combined open dictionary"}
+  - {id: function,      family: linguistic, route: B, output: fw_function_count,  citation: "union of closed-class function words (Quirk et al. 1985)"}
+  - {id: pronoun,       family: linguistic, route: B, output: pron_pronoun_count, citation: "ppron + ipron (Quirk et al. 1985)"}
+  - {id: ppron,         family: linguistic, route: B, output: pron_ppron_count,   citation: "personal pronouns (i+we+you+shehe+they)"}
+  - {id: i,             family: linguistic, route: B, output: pron_i_count,       citation: "first-person singular pronouns"}
+  - {id: we,            family: linguistic, route: B, output: pron_we_count,      citation: "first-person plural pronouns"}
+  - {id: you,           family: linguistic, route: B, output: pron_you_count,     citation: "second-person pronouns"}
+  - {id: shehe,         family: linguistic, route: B, output: pron_shehe_count,   citation: "third-person singular pronouns"}
+  - {id: they,          family: linguistic, route: B, output: pron_they_count,    citation: "third-person plural pronouns"}
+  - {id: ipron,         family: linguistic, route: B, output: pron_ipron_count,   citation: "impersonal pronouns"}
+  - {id: article,       family: linguistic, route: B, output: fw_article_count,   citation: "articles a/an/the"}
+  - {id: prep,          family: linguistic, route: B, output: fw_prep_count,      citation: "closed-class prepositions"}
+  - {id: auxverb,       family: linguistic, route: B, output: fw_auxverb_count,   citation: "auxiliary + modal verbs"}
+  - {id: adverb,        family: linguistic, route: B, output: fw_adverb_count,    citation: "common closed-class adverbs"}
+  - {id: conj,          family: linguistic, route: B, output: fw_conj_count,      citation: "coordinating + subordinating conjunctions"}
+  - {id: negate,        family: linguistic, route: B, output: fw_negate_count,    citation: "negations (spelled forms; contractions not tokenized)"}
+  - {id: det,           family: linguistic, route: B, output: fw_determiner_count,citation: "determiners"}
+  - {id: number,        family: linguistic, route: B, output: fw_number_count,    citation: "number words + digit tokens"}
+  - {id: quantity,      family: linguistic, route: B, output: fw_quantity_count,  citation: "quantifiers"}
+  - {id: focuspast,     family: linguistic, route: F, output: focuspast_count,    citation: "morphology/auxiliary heuristic (-ed + past auxiliaries)"}
+  - {id: focuspresent,  family: linguistic, route: F, output: focuspresent_count, citation: "present-tense auxiliary heuristic"}
+  - {id: focusfuture,   family: linguistic, route: F, output: focusfuture_count,  citation: "future-marker heuristic (will/shall/going to)"}
+  - {id: verb,          family: linguistic, route: G, output: null, reason: "Requires a POS tagger we do not ship; no closed-class list for open-class verbs."}
+  - {id: adj,           family: linguistic, route: G, output: null, reason: "Requires a POS tagger we do not ship; no closed-class list for open-class adjectives."}
+
+  # --- Cognition (route B closed-class connectives) ---
+  - {id: cogproc,    family: cognition, route: B, output: cog_cogproc_count,  citation: "union of insight/cause/discrep/tentat/certitude/differ/memory"}
+  - {id: insight,    family: cognition, route: B, output: cog_insight_count,  citation: "open insight verbs (Quirk et al. 1985; NLTK)"}
+  - {id: cause,      family: cognition, route: B, output: cog_cause_count,    citation: "causal connectives"}
+  - {id: discrep,    family: cognition, route: B, output: cog_discrep_count,  citation: "discrepancy modals"}
+  - {id: tentat,     family: cognition, route: B, output: cog_tentat_count,   citation: "tentative markers"}
+  - {id: certitude,  family: cognition, route: B, output: cog_certitude_count,citation: "certainty markers"}
+  - {id: differ,     family: cognition, route: B, output: cog_differ_count,   citation: "differentiation markers"}
+  - {id: memory,     family: cognition, route: B, output: cog_memory_count,   citation: "memory verbs"}
+
+  # --- Affect (route A Empath, route B swear) ---
+  - {id: tone_pos,  family: affect, route: A, output: liwc_tone_pos_count,  citation: "Empath positive-affect union (Fast et al. 2016)"}
+  - {id: tone_neg,  family: affect, route: A, output: liwc_tone_neg_count,  citation: "Empath negative-affect union"}
+  - {id: emo_anx,   family: affect, route: A, output: liwc_emo_anx_count,   citation: "Empath nervousness/fear/timidity"}
+  - {id: emo_anger, family: affect, route: A, output: liwc_emo_anger_count, citation: "Empath anger/rage/aggression"}
+  - {id: emo_sad,   family: affect, route: A, output: liwc_emo_sad_count,   citation: "Empath sadness/disappointment/suffering"}
+  - {id: swear,     family: affect, route: A, output: liwc_swear_count,     citation: "Empath swearing_terms"}
+
+  # --- Social (route A) ---
+  - {id: social,    family: social, route: A, output: liwc_social_count,    citation: "Empath social-reference union"}
+  - {id: family,    family: social, route: A, output: liwc_family_count,    citation: "Empath family"}
+  - {id: friend,    family: social, route: A, output: liwc_friend_count,    citation: "Empath friends"}
+  - {id: female,    family: social, route: A, output: liwc_female_count,    citation: "Empath feminine"}
+  - {id: male,      family: social, route: A, output: liwc_male_count,      citation: "Empath masculine"}
+  - {id: prosocial, family: social, route: A, output: liwc_prosocial_count, citation: "Empath help/giving/sympathy/affection/politeness"}
+  - {id: polite,    family: social, route: A, output: liwc_polite_count,    citation: "Empath politeness"}
+  - {id: conflict,  family: social, route: A, output: liwc_conflict_count,  citation: "Empath fight/dispute/aggression/war/violence/crime"}
+  - {id: comm,      family: social, route: A, output: liwc_comm_count,      citation: "Empath communication/speaking/listen/messaging"}
+  - {id: moral,     family: social, route: G, output: null, reason: "No Empath analog; LIWC moral dictionary not openly reproducible without shipping its word list."}
+
+  # --- Drives (route A) ---
+  - {id: affiliation, family: drives, route: A, output: liwc_affiliation_count, citation: "Empath friends/family/help/meeting/social_media"}
+  - {id: achieve,     family: drives, route: A, output: liwc_achieve_count,     citation: "Empath achievement/competing/work/gain"}
+  - {id: power,       family: drives, route: A, output: liwc_power_count,       citation: "Empath power/dominance/leader/government/military"}
+  - {id: reward,      family: drives, route: A, output: liwc_reward_count,      citation: "Empath gain/money/valuable/wealthy"}
+  - {id: allure,      family: drives, route: A, output: liwc_allure_count,      citation: "Empath attractive/beauty/appearance/fashion"}
+  - {id: risk,        family: drives, route: G, output: null, reason: "No clean Empath analog for risk/avoidance; conflict/injury categories conflate with the conflict dimension."}
+  - {id: curiosity,   family: drives, route: G, output: null, reason: "No Empath analog; anticipation/surprise are weak proxies and would overstate parity."}
+
+  # --- Perception (routes A, B) ---
+  - {id: attention, family: perception, route: B, output: perc_attention_count, citation: "open attention-verb list (Quirk et al. 1985)"}
+  - {id: motion,    family: perception, route: A, output: liwc_motion_count,    citation: "Empath movement/driving/traveling/dance"}
+  - {id: space,     family: perception, route: B, output: perc_space_count,     citation: "spatial prepositions/adverbs (Quirk et al. 1985)"}
+  - {id: visual,    family: perception, route: B, output: perc_visual_count,    citation: "open visual-perception verbs"}
+  - {id: auditory,  family: perception, route: A, output: liwc_auditory_count,  citation: "Empath hearing/listen/sound/noise"}
+  - {id: feeling,   family: perception, route: B, output: perc_feeling_count,   citation: "open feeling/touch words"}
+
+  # --- Lifestyle / personal concerns (route A) ---
+  - {id: work,     family: lifestyle, route: A, output: liwc_work_count,     citation: "Empath work/occupation/office/business/collar-jobs"}
+  - {id: leisure,  family: lifestyle, route: A, output: liwc_leisure_count,  citation: "Empath leisure/fun/play/party/vacation/sports/music/dance"}
+  - {id: home,     family: lifestyle, route: A, output: liwc_home_count,     citation: "Empath home/furniture/domestic_work/cleaning"}
+  - {id: money,    family: lifestyle, route: A, output: liwc_money_count,    citation: "Empath money/banking/payment/economics/wealthy/poor"}
+  - {id: religion, family: lifestyle, route: A, output: liwc_religion_count, citation: "Empath religion/divine/worship"}
+
+  # --- Physical (route A) ---
+  - {id: health,     family: physical, route: A, output: liwc_health_count,     citation: "Empath health/healing/medical_emergency"}
+  - {id: illness,    family: physical, route: A, output: liwc_illness_count,    citation: "Empath injury/pain/medical_emergency/suffering"}
+  - {id: wellness,   family: physical, route: A, output: liwc_wellness_count,   citation: "Empath exercise/hygiene/healing"}
+  - {id: substances, family: physical, route: A, output: liwc_substances_count, citation: "Empath alcohol (partial; no general drug category)"}
+  - {id: sexual,     family: physical, route: A, output: liwc_sexual_count,     citation: "Empath sexual/lust"}
+  - {id: food,       family: physical, route: A, output: liwc_food_count,       citation: "Empath eating/cooking/restaurant"}
+  - {id: death,      family: physical, route: A, output: liwc_death_count,      citation: "Empath death/kill"}
+  - {id: mental,     family: physical, route: G, output: null, reason: "LIWC 'mental' (mental-health) has no Empath analog; conflating with mental-state verbs would mislabel the construct."}
+
+  # --- Conversational / informal (route B) ---
+  - {id: netspeak, family: conversational, route: B, output: inf_netspeak_count, citation: "open internet-abbreviation list (NLTK casual tokens)"}
+  - {id: assent,   family: conversational, route: B, output: inf_assent_count,   citation: "open assent markers"}
+  - {id: nonflu,   family: conversational, route: B, output: inf_nonflu_count,   citation: "open nonfluency/backchannel list"}
+  - {id: filler,   family: conversational, route: B, output: inf_filler_count,   citation: "open discourse-filler list"}
+
+  # --- Punctuation (route D) ---
+  - {id: allpunc, family: punctuation, route: D, output: punc_allpunc_count, citation: "all punctuation characters"}
+  - {id: period,  family: punctuation, route: D, output: punc_period_count,  citation: "."}
+  - {id: comma,   family: punctuation, route: D, output: punc_comma_count,   citation: ","}
+  - {id: qmark,   family: punctuation, route: D, output: punc_qmark_count,   citation: "?"}
+  - {id: exclam,  family: punctuation, route: D, output: punc_exclam_count,  citation: "!"}
+  - {id: apostro, family: punctuation, route: D, output: punc_apostro_count, citation: "apostrophes"}
+  - {id: otherp,  family: punctuation, route: D, output: punc_otherp_count,  citation: "other punctuation (; : - ( ) [ ] etc.)"}

@@ -1,0 +1,179 @@
+version: 2
+external_tool:
+  name: empath
+  required_version: "0.89"
+
+# Route-A coverage of LIWC-22 dimension families via Empath categories.
+# Every name below is a real category in empath==0.89 (194 categories).
+# Groups are organizational only; the loader flattens them into a deduped
+# union. The three headline composites at the bottom are unchanged from
+# version 1 so the reasoning-vs-recall findings remain reproducible.
+categories:
+  dialogue_related:
+    - communication
+    - speaking
+    - listen
+    - messaging
+  social:
+    - family
+    - friends
+    - children
+    - social_media
+    - communication
+    - speaking
+    - listen
+    - messaging
+  affect:
+    - positive_emotion
+    - negative_emotion
+    - emotional
+    - affection
+    - sympathy
+    - joy
+    - sadness
+    - anger
+    - fear
+    - nervousness
+    - disappointment
+    - trust
+  affect_positive:
+    - optimism
+    - cheerfulness
+    - contentment
+    - love
+    - pride
+    - zest
+    - fun
+  affect_negative:
+    - disgust
+    - hate
+    - shame
+    - suffering
+    - rage
+    - aggression
+    - irritability
+    - exasperation
+    - envy
+    - pain
+    - horror
+  affect_anx:
+    - timidity
+  swear:
+    - swearing_terms
+  social_extended:
+    - help
+    - meeting
+    - giving
+    - politeness
+  gender:
+    - feminine
+    - masculine
+  conflict:
+    - fight
+    - dispute
+    - war
+    - violence
+    - crime
+  drives:
+    - achievement
+    - competing
+    - gain
+    - power
+    - dominant_personality
+    - dominant_heirarchical
+    - leader
+    - government
+    - military
+  reward:
+    - valuable
+    - wealthy
+  allure:
+    - attractive
+    - beauty
+    - appearance
+    - fashion
+  perception_audio_motion:
+    - hearing
+    - sound
+    - noise
+    - movement
+    - driving
+    - traveling
+    - dance
+  lifestyle_work:
+    - work
+    - occupation
+    - office
+    - business
+    - white_collar_job
+    - blue_collar_job
+  lifestyle_leisure:
+    - leisure
+    - play
+    - party
+    - vacation
+    - sports
+    - music
+  lifestyle_home:
+    - home
+    - furniture
+    - domestic_work
+    - cleaning
+  lifestyle_money:
+    - money
+    - banking
+    - payment
+    - economics
+    - poor
+  lifestyle_religion:
+    - religion
+    - divine
+    - worship
+  physical_health:
+    - health
+    - healing
+    - medical_emergency
+    - injury
+    - exercise
+    - hygiene
+  physical_body:
+    - alcohol
+    - sexual
+    - lust
+    - eating
+    - cooking
+    - restaurant
+    - death
+    - kill
+
+composites:
+  dialogue_composite_z:
+    - question_mark_per_1k
+    - quote_mark_per_1k
+    - speaker_turn_per_1k
+    - empath_communication_per_1k
+    - empath_speaking_per_1k
+    - empath_listen_per_1k
+    - empath_messaging_per_1k
+  empath_social_z:
+    - empath_family_per_1k
+    - empath_friends_per_1k
+    - empath_children_per_1k
+    - empath_social_media_per_1k
+    - empath_communication_per_1k
+    - empath_speaking_per_1k
+    - empath_listen_per_1k
+    - empath_messaging_per_1k
+  empath_affect_z:
+    - empath_positive_emotion_per_1k
+    - empath_negative_emotion_per_1k
+    - empath_emotional_per_1k
+    - empath_affection_per_1k
+    - empath_sympathy_per_1k
+    - empath_joy_per_1k
+    - empath_sadness_per_1k
+    - empath_anger_per_1k
+    - empath_fear_per_1k
+    - empath_nervousness_per_1k
+    - empath_disappointment_per_1k
+    - empath_trust_per_1k

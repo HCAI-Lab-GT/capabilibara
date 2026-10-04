@@ -14,4 +14,8 @@ design-review/
 __pycache__/
 *.pyc
 .DS_Store
-
+.venv/
+.ruff_cache/
+.pytest_cache/
+bergson/
+olmes/
