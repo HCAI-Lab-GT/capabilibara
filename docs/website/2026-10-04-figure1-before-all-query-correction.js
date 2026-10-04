@@ -51,15 +51,15 @@ var BINS = [
   { id: "B6", short: "Politics × Docs",   grid: [4, 6] }
 ];
 
-// Scene 3 data — full-precision signed z-scores from the canonical all-query
-// aggregate CSVs (OLMo3-7B). Rows are benchmarks, columns are B1–B6.
+// Scene 3 data — real signed z-scores from the paper's Figure 1 (OLMo3-7B).
+// Rows are benchmarks, columns the six tracked bins B1–B6.
 var INFLUENCE = {
   cols: BINS.map(function (b) { return b.short; }),
   rows: [
-    { label: "SocialIQA",   color: C.socReason,  v: [16.002201680532647, 1.9032320071325117, 0.45586493357364277, 0.08075127801467617, 6.544879161434856, 0.41180212200064503], sig: 0 },
-    { label: "MMLU SS",     color: C.socKnow,    v: [-7.311568419359855, -0.059447873550232545, 1.1362103412100477, 2.168523372748921, 6.950678155760647, 6.85592745766753] },
-    { label: "ARC-Chal.",   color: C.stemReason, v: [-1.9175730916962561, -0.749044125596512, -0.35186907802962186, 2.9432077676172916, 8.163694184943983, 5.593661457394872] },
-    { label: "MMLU STEM",   color: C.stemKnow,   v: [-5.745148769732363, -0.45984752394763484, -0.5755338073485243, 3.0966768509493265, 8.418946264938919, 5.559243105747322] }
+    { label: "SocialIQA",   color: C.socReason,  v: [16.0, 1.9, 0.5, 0.1, 6.5, 0.4], sig: 0 },
+    { label: "MMLU SS",     color: C.socKnow,    v: [-7.3, -0.1, 1.1, 2.2, 7.0, 6.9] },
+    { label: "ARC-Chal.",   color: C.stemReason, v: [-0.5, -0.8, -3.4, 2.7, 8.6, 1.6] },
+    { label: "MMLU STEM",   color: C.stemKnow,   v: [-5.7, -0.5, -0.6, 3.1, 8.4, 5.6] }
   ]
 };
 
@@ -84,7 +84,7 @@ var STAGES = [
 var CAPTIONS = [
   "<strong>1) Build a labeled corpus.</strong> The Dolma3 mix is de-duplicated to ~1.26B unique documents and labeled with WebOrganizer's 24 topics &times; 24 formats: <strong>576 bins</strong>. A stratified working set samples 10,000 documents per bin (5.68M documents). Six bins, B1&ndash;B6, are tracked through every stage.",
   "<strong>2) Score every region.</strong> Four benchmarks form a 2&times;2 design: domain (social vs. STEM) crossed with capability (reasoning vs. knowledge). TrackStar, via Bergson, compares document gradients from OLMo3-7B Base with query gradients from OLMo3-7B Instruct, yielding a signed score for every bin &times; benchmark.",
-  "<strong>3) Read the map.</strong> Bin-level averages, z-scored within each benchmark <em>(OLMo3-7B)</em>. Each row aggregates all queries from one benchmark, including correct and incorrect answers: <strong>SocialIQA</strong>, <strong>MMLU Social Sciences</strong>, <strong>ARC-Challenge</strong>, and <strong>MMLU STEM</strong>. Literature &times; Customer Support is extreme for SocialIQA (+16.0) yet negative for the three comparison benchmarks, whose support concentrates in documentation-heavy bins.",
+  "<strong>3) Read the map.</strong> Bin-level averages, z-scored within each benchmark <em>(OLMo3-7B)</em>. Literature &times; Customer Support is extreme for SocialIQA (+16.0) yet negative for the three comparison benchmarks, whose support concentrates in documentation-heavy bins.",
   "<strong>4) Check it causally.</strong> Per topic, forget the top-200 documents by influence versus 1,000 random same-topic documents (NGDiff, rank-8 LoRA, OLMo3-7B Base). Influence-targeted forgetting damages SocialIQA far more than random controls (paired Wilcoxon p &asymp; 10<sup>&minus;5</sup>)."
 ];
 
@@ -124,9 +124,6 @@ function inflColor(z) {
 function inflInk(z) { return Math.min(Math.abs(z) / 3, 1) > 0.55 ? "#fff" : "#222"; }
 function fmt(v, plus, decimals) {
   return (v >= 0 && plus ? "+" : "") + v.toFixed(decimals == null ? 2 : decimals);
-}
-function fmtInfluence(v, plus) {
-  return (v >= 0 && plus ? "+" : "") + v.toFixed(Math.abs(v) >= 10 ? 1 : 2);
 }
 
 // ================= scene builders =================
@@ -391,7 +388,7 @@ function heatScene(root) {
       var proxy = { n: 0 };
       tl.to(proxy, {
         n: o.val, duration: 0.5,
-        onUpdate: function () { o.label.textContent = fmtInfluence(proxy.n, true); o.label.setAttribute("fill", o.ink); }
+        onUpdate: function () { o.label.textContent = fmt(proxy.n, true, 1); o.label.setAttribute("fill", o.ink); }
       }, delay + 0.1);
       if (o.sig) tl.to(o.rect, { attr: { "stroke-width": 3 }, duration: 0.3 }, delay + 0.5);
     });
