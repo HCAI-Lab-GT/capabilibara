@@ -158,7 +158,7 @@ with gr.Blocks(theme=theme, title="Capabilibara — Capability Provenance in Lan
                 | **Corpus Bins** | `576` | WebOrganizer 24×24 topic-format matrix |
                 | **Working Set** | `5.68M` | Stratified unique Dolma3 documents |
                 | **Base Model** | `OLMo-3-7B` | AllenAI open base model |
-                | **Unlearning Shift** | `+1.60 pp` | SocialIQA damage on unlearning flagged bins ($p \\approx 10^{-5}$) |
+                | **Unlearning Check** | `Validated` | Targeted forgetting damages SocialIQA more than random controls ($p \\approx 10^{-5}$) |
                 | **Attribution Compute** | `~37K` | H200-equivalent GPU hours |
 
                 ### Key Findings

@@ -1,0 +1,54 @@
+version: 1
+# LIWC-22 dimension -> Empath category list (route A of the open parity crosswalk).
+# Used for documentation and for the appendix parity table. Each LIWC affect /
+# social / drives / perception / lifestyle / physical dimension is approximated by
+# the union of the listed Empath categories (counts summed). Empath categories are
+# LIWC-adjacent, not LIWC-identical: this is an open approximation, not a re-export.
+# Category names are the real empath==0.89 names (including Empath's own spelling
+# 'dominant_heirarchical').
+
+affect:
+  tone_pos: [positive_emotion, joy, optimism, cheerfulness, contentment, love, pride, zest, fun]
+  tone_neg: [negative_emotion, sadness, anger, fear, disgust, hate, shame, suffering, nervousness, disappointment, rage, pain, horror]
+  emo_anx: [nervousness, fear, timidity]
+  emo_anger: [anger, rage, aggression, irritability, exasperation]
+  emo_sad: [sadness, disappointment, suffering]
+  swear: [swearing_terms]
+
+social:
+  social: [family, friends, children, communication, speaking, listen, messaging, social_media, help, meeting, giving, sympathy, affection]
+  family: [family]
+  friend: [friends]
+  female: [feminine]
+  male: [masculine]
+  prosocial: [help, giving, sympathy, affection, politeness]
+  polite: [politeness]
+  conflict: [fight, dispute, aggression, war, violence, crime]
+  comm: [communication, speaking, listen, messaging]
+
+drives:
+  affiliation: [friends, family, help, meeting, social_media]
+  achieve: [achievement, competing, work, gain]
+  power: [power, dominant_personality, dominant_heirarchical, leader, government, military]
+  reward: [gain, money, valuable, wealthy]
+  allure: [attractive, beauty, appearance, fashion]
+
+perception:
+  motion: [movement, driving, traveling, dance]
+  auditory: [hearing, listen, sound, noise]
+
+lifestyle:
+  work: [work, occupation, office, business, white_collar_job, blue_collar_job]
+  leisure: [leisure, fun, play, party, vacation, sports, music, dance]
+  home: [home, furniture, domestic_work, cleaning]
+  money: [money, banking, payment, economics, wealthy, poor]
+  religion: [religion, divine, worship]
+
+physical:
+  health: [health, healing, medical_emergency]
+  illness: [injury, pain, medical_emergency, suffering]
+  wellness: [exercise, hygiene, healing]
+  substances: [alcohol]
+  sexual: [sexual, lust]
+  food: [eating, cooking, restaurant]
+  death: [death, kill]

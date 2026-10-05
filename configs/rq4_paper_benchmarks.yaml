@@ -1,0 +1,70 @@
+# Editable roster of benchmarks included in the RQ4 lexical analysis for the
+# paper. The figures / bootstrap / table scripts read this file so that adding
+# or removing a benchmark is a one-line edit here with NO code change.
+#
+# To add a benchmark (including a future held-out probe such as SimpleToM or
+# ToMBench): drop its zscored_<id>.csv into
+# artifacts/zscored_bin_scores/aggregated/ and add an entry below. The `id`
+# must match the CSV stem (zscored_<id>.csv).
+#
+# MODEL: all benchmarks here are scored against the instruct model. The four
+# primary benchmarks come from influence_bin_scores, whose BBH-snarks output is
+# byte-identical (same MD5) to influence_bbh_instruct (see
+# scripts/analysis/export_zscored_bin_scores.py), confirming instruct scoring.
+#
+# `group` is used only for ordering / colouring in plots and for the findings
+# narrative; it does not change any computation.
+#   social_reasoning      - social/theory-of-mind reasoning
+#   commonsense_reasoning - commonsense / pragmatic reasoning (BBH tasks)
+#   knowledge_recall      - factual multiple-choice recall
+#
+# Benchmarks not listed below are excluded from the current paper roster.
+
+version: 1
+
+benchmarks:
+  - id: socialiqa
+    label: SocialIQA
+    short: SocialIQA
+    group: social_reasoning
+
+  - id: mmlu_social_science
+    label: MMLU-Social
+    short: MMLU-Social
+    group: knowledge_recall
+
+  - id: arc_challenge
+    label: ARC-Challenge
+    short: ARC-Challenge
+    group: knowledge_recall
+
+  - id: mmlu_stem
+    label: MMLU-STEM
+    short: MMLU-STEM
+    group: knowledge_recall
+
+  - id: bbh_snarks_instruct
+    label: BBH Snarks
+    short: BBH Snarks
+    group: commonsense_reasoning
+
+  - id: bbh_causal_judgement_instruct
+    label: BBH Causal-Judgement
+    short: BBH Causal-Judgement
+    group: commonsense_reasoning
+
+  - id: bbh_sports_understanding_instruct
+    label: BBH Sports-Understanding
+    short: BBH Sports-Understanding
+    group: commonsense_reasoning
+
+# Held-out probes — NOT YET AVAILABLE (no attribution bin-scores produced yet).
+# Uncomment once zscored_simpletom.csv / zscored_tombench_false_belief.csv exist.
+#  - id: simpletom
+#    label: SimpleToM
+#    short: SimpleToM
+#    group: social_reasoning
+#  - id: tombench_false_belief
+#    label: ToMBench (False Belief)
+#    short: ToMBench-FB
+#    group: social_reasoning

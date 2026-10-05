@@ -84,6 +84,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Castoro:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/index.css?v=20260822b">
   <link rel="stylesheet" href="./static/css/figures.css?v=20260822c">
+  <link rel="stylesheet" href="./static/css/figure2.css?v=20261004">
   <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
@@ -420,6 +421,22 @@
         </p>
       </div>
 
+      <details class="profile-figure" id="figure2-profiles">
+        <summary>Figure 2: topic and format attribution profiles</summary>
+        <figure>
+          <a href="./static/images/figures/fig_rq1_format_concentration.pdf" aria-label="Open Figure 2 as a vector PDF">
+            <img src="./static/images/figures/fig_rq1_format_concentration.png"
+                 width="3234" height="2130" loading="lazy" decoding="async"
+                 alt="Format and topic influence profiles for four benchmarks, with selected topic-format bins and a red-to-blue suppressive-to-supportive color scale from minus 2.5 to plus 2.5 z. Literature and customer support score plus 16.0 for SocialIQA and negative values for the other three benchmarks.">
+          </a>
+          <figcaption>
+            All benchmark queries. Panels A and B share an axis; panel C shows selected bins.
+            The heatmap colors saturate at &plusmn;2.5 z, while the printed values remain uncapped.
+            <a href="./static/images/figures/fig_rq1_format_concentration.pdf">Open the vector figure.</a>
+          </figcaption>
+        </figure>
+      </details>
+
       <div class="concept-row">
         <div class="concept-copy" data-reveal>
           <p class="mini-kicker">The signature in OLMo3</p>
@@ -504,8 +521,7 @@
             unlearn the high-influence regions and compare against unlearning randomly chosen
             documents from the same topics. In OLMo3, influence-targeted forgetting damages
             social reasoning far more than the random controls, while the effect on the other
-            benchmarks is weak or absent. The chart shows the extra
-            accuracy damage in percentage points for the topics where the gap is largest.
+            benchmarks is weak or absent. The chart ranks the topics where that gap is largest.
           </p>
           <p>
             The check validates corpus regions in aggregate, not individually causal documents.
@@ -514,22 +530,17 @@
           </p>
         </div>
         <figure class="finding-figure" data-reveal>
-          <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart of extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA, by topic. Literature 17.53, Education and Jobs 15.03, Sports and Fitness 8.40, Fashion and Beauty 6.93, Home and Hobbies 6.87 percentage points.">
+          <svg class="unlearn-fig" viewBox="0 0 640 234" role="img" aria-label="Bar chart ranking topics by extra accuracy damage from influence-targeted forgetting versus random same-topic forgetting for SocialIQA: Literature largest, then Education and Jobs, Sports and Fitness, Fashion and Beauty, and Home and Hobbies.">
             <text x="178" y="29" class="uf-label" text-anchor="end">Literature</text>
             <rect x="190" y="12" width="370" height="26" rx="3" class="uf-bar"></rect>
-            <text x="570" y="29" class="uf-value">+17.53 pp</text>
             <text x="178" y="73" class="uf-label" text-anchor="end">Education &amp; Jobs</text>
             <rect x="190" y="56" width="317" height="26" rx="3" class="uf-bar"></rect>
-            <text x="517" y="73" class="uf-value">+15.03 pp</text>
             <text x="178" y="117" class="uf-label" text-anchor="end">Sports &amp; Fitness</text>
             <rect x="190" y="100" width="177" height="26" rx="3" class="uf-bar"></rect>
-            <text x="377" y="117" class="uf-value">+8.40 pp</text>
             <text x="178" y="161" class="uf-label" text-anchor="end">Fashion &amp; Beauty</text>
             <rect x="190" y="144" width="146" height="26" rx="3" class="uf-bar"></rect>
-            <text x="346" y="161" class="uf-value">+6.93 pp</text>
             <text x="178" y="205" class="uf-label" text-anchor="end">Home &amp; Hobbies</text>
             <rect x="190" y="188" width="145" height="26" rx="3" class="uf-bar"></rect>
-            <text x="345" y="205" class="uf-value">+6.87 pp</text>
             <line x1="190" y1="6" x2="190" y2="220" class="uf-baseline"></line>
           </svg>
         </figure>

@@ -1,0 +1,16 @@
+# OLMo3-7B + LoRA configuration
+model_id: "allenai/Olmo-3-1025-7B"
+torch_dtype: "bfloat16"        # A100 / L40s native
+attn_implementation: "sdpa"
+
+lora:
+  r: 8
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+  lora_alpha: 16
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"

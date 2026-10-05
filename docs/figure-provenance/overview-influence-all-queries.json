@@ -1,0 +1,85 @@
+{
+  "query_cohort": "all benchmark queries, correct and incorrect",
+  "normalization": "z-score of signed bin means across 576 bins per benchmark",
+  "color_limit": 18,
+  "bins": [
+    {
+      "topic": "literature",
+      "format": "customer_support"
+    },
+    {
+      "topic": "social_life",
+      "format": "q_a_forum"
+    },
+    {
+      "topic": "travel_and_tourism",
+      "format": "q_a_forum"
+    },
+    {
+      "topic": "science_math_and_technology",
+      "format": "academic_writing"
+    },
+    {
+      "topic": "industrial",
+      "format": "documentation"
+    },
+    {
+      "topic": "politics",
+      "format": "documentation"
+    }
+  ],
+  "rows": [
+    {
+      "benchmark": "socialiqa",
+      "source": "artifacts/zscored_bin_scores/aggregated/zscored_socialiqa.csv",
+      "sha256": "619f2e43bba867bd80c3ed245e62137ffbf1fa6069c738933b6f3e8983e2dccb",
+      "zscore": [
+        16.002201680532647,
+        1.9032320071325117,
+        0.45586493357364277,
+        0.08075127801467617,
+        6.544879161434856,
+        0.41180212200064503
+      ]
+    },
+    {
+      "benchmark": "mmlu_social_science",
+      "source": "artifacts/zscored_bin_scores/aggregated/zscored_mmlu_social_science.csv",
+      "sha256": "b0342c57ca066f0188174a85949d75cda44b9b08ab5f97a556f23f233e3d822b",
+      "zscore": [
+        -7.311568419359855,
+        -0.059447873550232545,
+        1.1362103412100477,
+        2.168523372748921,
+        6.950678155760647,
+        6.85592745766753
+      ]
+    },
+    {
+      "benchmark": "arc_challenge",
+      "source": "artifacts/zscored_bin_scores/aggregated/zscored_arc_challenge.csv",
+      "sha256": "b408eb60ed4f293da58b3c8cff30316d43bdbe429a2a03b0028865d39a5f50ba",
+      "zscore": [
+        -1.9175730916962561,
+        -0.749044125596512,
+        -0.35186907802962186,
+        2.9432077676172916,
+        8.163694184943983,
+        5.593661457394872
+      ]
+    },
+    {
+      "benchmark": "mmlu_stem",
+      "source": "artifacts/zscored_bin_scores/aggregated/zscored_mmlu_stem.csv",
+      "sha256": "dd5d7d81945efd19b1f57c58ccb427e65296e7b6e8e6f09930eedbe1f6818c9d",
+      "zscore": [
+        -5.745148769732363,
+        -0.45984752394763484,
+        -0.5755338073485243,
+        3.0966768509493265,
+        8.418946264938919,
+        5.559243105747322
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Main Hydra config for NGDiff unlearning
+defaults:
+  - model: olmo3_lora
+  - trainer: ngdiff
+  - data: dolma_pool
+  - _self_
+
+# Runtime overrides
+topic_bin: "entertainment"        # single topic OR comma-separated list
+topic_bins: null                  # alternative: explicit list, e.g. [politics,history_and_geography]
+output_dir: "runs/unlearn/${topic_bin}"
+retain_topics: null               # if set, retain ONLY these topic(s) instead of all non-forget
+seed: 42
+wandb_project: "social-data-attribution"
+wandb_entity: "hcai-lab"
+
+hydra:
+  run:
+    dir: ${output_dir}
