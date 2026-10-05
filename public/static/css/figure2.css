@@ -1,0 +1,29 @@
+/* Full attribution profiles, shared with the paper. */
+.profile-figure {
+  max-width: 64rem;
+  margin: 1.5rem auto 2.5rem;
+}
+.profile-figure summary {
+  cursor: pointer;
+  padding: 0.7rem 0;
+  font-weight: 600;
+}
+.profile-figure figure {
+  margin: 0.75rem 0 0;
+}
+.profile-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: white;
+}
+.profile-figure figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.profile-figure a:focus-visible,
+.profile-figure summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
