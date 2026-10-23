@@ -59,10 +59,11 @@ The code snapshot records the component implementations. Internal run orchestrat
 git clone https://github.com/HCAI-Lab-GT/capabilibara.git
 cd capabilibara
 bash scripts/bootstrap_local_deps.sh
-uv sync --no-build-isolation
+uv sync --frozen
+uv run --no-sync pytest -q
 ```
 
-This is the recorded dependency setup for Python 3.12, with pinned Bergson and OLMES revisions. It has not been tested from a fresh public clone, and the complete production workflow requires large upstream datasets, model weights, and compute. See [third-party notices](THIRD_PARTY_NOTICES.md) for the patch licenses.
+This is the recorded dependency setup for Python 3.12, with pinned Bergson and OLMES revisions. These commands were checked from a fresh public clone on Linux x86_64 only (macOS arm64 and Linux aarch64 are untested), and the complete production workflow requires large upstream datasets, model weights, and compute. See [third-party notices](THIRD_PARTY_NOTICES.md) for the patch licenses.
 
 ## Method
 
