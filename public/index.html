@@ -83,7 +83,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&family=Castoro:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/index.css?v=20260822b">
-  <link rel="stylesheet" href="./static/css/figures.css?v=20260822c">
+  <link rel="stylesheet" href="./static/css/figures.css?v=20261004a">
   <link rel="stylesheet" href="./static/css/figure2.css?v=20261004">
   <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
@@ -440,31 +440,35 @@
       <div class="concept-row">
         <div class="concept-copy" data-reveal>
           <p class="mini-kicker">The signature in OLMo3</p>
-          <h3>Two flavors of text carry social reasoning.</h3>
+          <h3>Two kinds of text support SocialIQA.</h3>
           <p>
-            Social reasoning's influence profile across the 576 corpus bins looks unlike the
+            SocialIQA's influence profile across the 576 corpus bins looks unlike the
             profiles of STEM reasoning and the two knowledge tasks, which closely resemble one
             another. And the social-versus-STEM contrast is wider for the reasoning pair than
             for the knowledge pair, while leaning the same direction in both.
           </p>
           <p>
-            Read the high-influence text and it comes in two flavors: interactional writing
-            (dialogue, questions and answers, lots of "you" and "I") and expository writing
-            about how people deal with each other, such as guides and manuals. STEM reasoning
-            draws instead on structured, technical text. The claim that travels is the shape of
-            the distribution, not any single corpus slice.
+            SocialIQA's 20 highest-influence bins split evenly. Half are conversational text:
+            customer-support pages, Q&amp;A forums, FAQs, comment threads and personal writing.
+            None of these are top bins for ARC-Challenge or either MMLU set. The other half is the
+            same long documentation those benchmarks draw on. Compared with the text behind ARC
+            and MMLU, SocialIQA's top text is shorter and has more dialogue, social, emotion and
+            thinking-and-feeling words (all 95% confidence intervals exclude zero). These are
+            descriptive word counts, and other commonsense-reasoning tasks share the same
+            signature, so they describe SocialIQA's data rather than social reasoning as a whole.
+            The claim that travels is the shape of the distribution, not any single corpus slice.
           </p>
         </div>
         <figure class="finding-figure" data-reveal data-reveal-delay="120">
           <div class="cluster-viz" data-concept="clusters">
             <div class="cluster cloud-dialogue">
-              <p class="cluster-name">interactional writing</p>
-              <span data-rank="1" data-x="26" data-y="40">Q&amp;A</span><span data-rank="2" data-x="58" data-y="33">reply</span><span data-rank="3" data-x="47" data-y="57">advice</span><span data-rank="4" data-x="21" data-y="71">feelings</span><span data-rank="5" data-x="59" data-y="77">intent</span>
+              <p class="cluster-name">conversational: SocialIQA only</p>
+              <span data-rank="1" data-x="40" data-y="29">customer support</span><span data-rank="2" data-x="70" data-y="50">Q&amp;A forum</span><span data-rank="3" data-x="24" data-y="57">FAQ</span><span data-rank="4" data-x="60" data-y="72">comment section</span><span data-rank="5" data-x="33" data-y="88">personal writing</span>
             </div>
             <div class="cluster-divider"></div>
             <div class="cluster cloud-docs">
-              <p class="cluster-name">people-centered documentation</p>
-              <span data-rank="1" data-x="30" data-y="37">guide</span><span data-rank="2" data-x="63" data-y="43">procedure</span><span data-rank="3" data-x="49" data-y="61">manual</span><span data-rank="4" data-x="19" data-y="64">policy</span><span data-rank="5" data-x="57" data-y="81">support</span>
+              <p class="cluster-name">documentation: also ARC &amp; MMLU</p>
+              <span data-rank="1" data-x="40" data-y="34">documentation</span><span data-rank="2" data-x="64" data-y="52">structured data</span><span data-rank="3" data-x="30" data-y="70">legal notices</span><span data-rank="4" data-x="63" data-y="85">tutorial</span>
             </div>
           </div>
         </figure>

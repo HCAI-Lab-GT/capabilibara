@@ -681,17 +681,16 @@
   transition: opacity 520ms ease, transform 520ms ease;
 }
 
-.cloud-dialogue span:nth-of-type(1) { left: 26%; top: 40%; }
-.cloud-dialogue span:nth-of-type(2) { left: 58%; top: 33%; }
-.cloud-dialogue span:nth-of-type(3) { left: 47%; top: 57%; }
-.cloud-dialogue span:nth-of-type(4) { left: 21%; top: 71%; }
-.cloud-dialogue span:nth-of-type(5) { left: 59%; top: 77%; }
+.cloud-dialogue span:nth-of-type(1) { left: 40%; top: 29%; }
+.cloud-dialogue span:nth-of-type(2) { left: 70%; top: 50%; }
+.cloud-dialogue span:nth-of-type(3) { left: 24%; top: 57%; }
+.cloud-dialogue span:nth-of-type(4) { left: 60%; top: 72%; }
+.cloud-dialogue span:nth-of-type(5) { left: 33%; top: 88%; }
 
-.cloud-docs span:nth-of-type(1) { left: 30%; top: 37%; }
-.cloud-docs span:nth-of-type(2) { left: 63%; top: 43%; }
-.cloud-docs span:nth-of-type(3) { left: 49%; top: 61%; }
-.cloud-docs span:nth-of-type(4) { left: 19%; top: 64%; }
-.cloud-docs span:nth-of-type(5) { left: 57%; top: 81%; }
+.cloud-docs span:nth-of-type(1) { left: 40%; top: 34%; }
+.cloud-docs span:nth-of-type(2) { left: 64%; top: 52%; }
+.cloud-docs span:nth-of-type(3) { left: 30%; top: 70%; }
+.cloud-docs span:nth-of-type(4) { left: 63%; top: 85%; }
 
 .cloud-docs span {
   background: var(--secondary-color);
